@@ -1,3 +1,4 @@
+const sharp = require('sharp');
 const uuid = require('uuid/v4');
 
 class Room {
@@ -57,7 +58,14 @@ class Room {
     peer.send(JSON.stringify({
       type: 'ROOM/JOIN',
       payload: {
-        meta,
+        meta: {
+          name: meta.name,
+          photos: meta.photos.map(({ _id, origin, photo }) => ({
+            _id,
+            origin,
+            photo: photo.toString('base64'),
+          })),
+        },
         peers: peers
           .reduce((peers, { id, user }) => {
             if (!user._id.equals(_id)) {
@@ -84,11 +92,90 @@ class Room {
       return;
     }
     switch (event.type) {
+      case 'ROOM/ADD_PHOTO':
+        this.onAddPhoto(peer, event.payload);
+        break;
+      case 'ROOM/MOVE_PHOTO':
+        this.onMovePhoto(peer, event.payload);
+        break;
+      case 'ROOM/REMOVE_PHOTO':
+        this.onRemovePhoto(peer, event.payload);
+        break;
       case 'ROOM/PEER_SIGNAL':
         this.onSignal(peer, event.payload);
         break;
       default:
         break;
+    }
+  }
+
+  onAddPhoto({ user: { _id: creator } }, { origin, photo: buffer }) {
+    const { meta } = this;
+    const image = sharp(Buffer.from(buffer, 'base64'));
+    image
+      .rotate()
+      .resize(512)
+      .metadata()
+      .then(({ width, height }) => (
+        image
+          .jpeg({ quality: 85 })
+          .toBuffer()
+          .then((photo) => {
+            meta.photos.push({
+              creator,
+              origin: {
+                x: origin.x - (width * 0.5),
+                y: origin.y - (height * 0.5),
+              },
+              photo,
+            });
+            return meta.save();
+          })
+      ))
+      .then(({ photos }) => {
+        const { _id, origin, photo } = photos[photos.length - 1];
+        this.broadcast({
+          event: {
+            type: 'ROOM/ADD_PHOTO',
+            payload: {
+              _id,
+              origin,
+              photo: photo.toString('base64'),
+            },
+          },
+        });
+      })
+      .catch(() => {});
+  }
+
+  onMovePhoto(peer, { origin, photo }) {
+    const { meta } = this;
+    const index = meta.photos.findIndex(({ _id }) => (_id.equals(photo)));
+    if (~index) {
+      meta.photos[index].origin.x = origin.x;
+      meta.photos[index].origin.y = origin.y;
+      meta.save();
+      this.broadcast({
+        event: {
+          type: 'ROOM/MOVE_PHOTO',
+          payload: { origin, photo },
+        },
+      });
+    }
+  }
+
+  onRemovePhoto(peer, { photo }) {
+    const { meta } = this;
+    const index = meta.photos.findIndex(({ _id }) => (_id.equals(photo)));
+    if (~index) {
+      meta.photos.splice(index, 1);
+      meta.save();
+      this.broadcast({
+        event: {
+          type: 'ROOM/REMOVE_PHOTO',
+          payload: { photo },
+        },
+      });
     }
   }
 

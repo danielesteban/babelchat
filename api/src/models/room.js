@@ -4,7 +4,18 @@ const config = require('../config');
 
 const RoomSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  slug: { type: String, required: true },
+  photos: [{
+    creator: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    origin: {
+      x: { type: Number, required: true },
+      y: { type: Number, required: true },
+    },
+    photo: { type: Buffer, required: true },
+  }],
 }, { timestamps: true });
 
 RoomSchema.plugin(URLSlugs('name'));

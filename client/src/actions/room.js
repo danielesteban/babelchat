@@ -1,9 +1,16 @@
 import * as types from './types';
 
-export function join({ meta, peers }) {
+export function addPhoto({ _id, origin, photo }) {
+  return {
+    type: types.ROOM_ADD_PHOTO,
+    payload: { _id, origin, photo },
+  };
+}
+
+export function join({ meta, peers, socket }) {
   return {
     type: types.ROOM_JOIN,
-    payload: { meta, peers },
+    payload: { meta, peers, socket },
   };
 }
 
@@ -32,6 +39,13 @@ export function peerStream({ peer, stream }) {
   return {
     type: types.ROOM_PEER_STREAM,
     payload: { peer, stream },
+  };
+}
+
+export function removePhoto({ photo }) {
+  return {
+    type: types.ROOM_REMOVE_PHOTO,
+    payload: { photo },
   };
 }
 

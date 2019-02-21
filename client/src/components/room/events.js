@@ -5,12 +5,14 @@ import { hideLoading, showLoading } from 'react-redux-loading-bar';
 import WebSocket from 'reconnecting-websocket';
 import Peer from 'simple-peer';
 import {
+  addPhoto,
   join,
+  removePhoto,
+  reset,
   peerJoin,
   peerLeave,
   peerSignal,
   peerStream,
-  reset,
   startStream,
 } from '@/actions/room';
 import * as types from '@/actions/types';
@@ -19,6 +21,7 @@ import API from '@/services/api';
 class Events extends Component {
   constructor(props) {
     super(props);
+    this.onDrop = this.onDrop.bind(this);
     this.onMessage = this.onMessage.bind(this);
   }
 
@@ -54,6 +57,9 @@ class Events extends Component {
     })
       .then(startStream)
       .catch((err) => { console.log(err); });
+
+    document.addEventListener('dragover', Events.onDragOver, false);
+    document.addEventListener('drop', this.onDrop, false);
   }
 
   shouldComponentUpdate() {
@@ -68,14 +74,51 @@ class Events extends Component {
     }
     socket.close(1000);
     reset();
+    document.removeEventListener('dragover', Events.onDragOver);
+    document.removeEventListener('drop', this.onDrop);
+  }
+
+  static onDragOver(e) {
+    e.preventDefault();
+  }
+
+  onDrop(e) {
+    const { socket } = this;
+    const {
+      clientX,
+      clientY,
+      dataTransfer: { files: [file] },
+    } = e;
+    e.preventDefault();
+    if (!file) {
+      return;
+    }
+    const origin = {
+      x: clientX - (window.innerWidth * 0.5),
+      y: clientY - (window.innerHeight * 0.5),
+    };
+    const reader = new FileReader();
+    reader.onload = () => {
+      socket.send(JSON.stringify({
+        type: 'ROOM/ADD_PHOTO',
+        payload: {
+          origin,
+          photo: reader.result.substr(reader.result.indexOf('base64') + 7),
+        },
+      }));
+    };
+    reader.readAsDataURL(file);
   }
 
   onMessage({ data }) {
+    const { socket } = this;
     const {
+      addPhoto,
       join,
       peerJoin,
       peerLeave,
       peerSignal,
+      removePhoto,
     } = this.props;
     let event;
     try {
@@ -84,10 +127,17 @@ class Events extends Component {
       return;
     }
     switch (event.type) {
+      case types.ROOM_ADD_PHOTO:
+        addPhoto(event.payload);
+        break;
+      case types.ROOM_REMOVE_PHOTO:
+        removePhoto(event.payload);
+        break;
       case types.ROOM_JOIN:
         join({
           ...event.payload,
           peers: event.payload.peers.map(peer => this.connectToPeer(peer, true)),
+          socket,
         });
         break;
       case types.ROOM_PEER_JOIN:
@@ -134,28 +184,32 @@ class Events extends Component {
 Events.propTypes = {
   slug: PropTypes.string.isRequired,
   stream: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]).isRequired,
+  addPhoto: PropTypes.func.isRequired,
+  hideLoading: PropTypes.func.isRequired,
   join: PropTypes.func.isRequired,
+  removePhoto: PropTypes.func.isRequired,
+  reset: PropTypes.func.isRequired,
   peerJoin: PropTypes.func.isRequired,
   peerLeave: PropTypes.func.isRequired,
   peerSignal: PropTypes.func.isRequired,
   peerStream: PropTypes.func.isRequired,
-  hideLoading: PropTypes.func.isRequired,
   showLoading: PropTypes.func.isRequired,
-  reset: PropTypes.func.isRequired,
   startStream: PropTypes.func.isRequired,
 };
 
 export default connect(
   ({ room: { stream } }) => ({ stream }),
   {
+    addPhoto,
+    hideLoading,
     join,
+    removePhoto,
+    reset,
     peerJoin,
     peerLeave,
     peerSignal,
     peerStream,
-    hideLoading,
     showLoading,
-    reset,
     startStream,
   }
 )(Events);

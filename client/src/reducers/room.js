@@ -23,6 +23,19 @@ const meta = (
   switch (action.type) {
     case types.ROOM_JOIN:
       return action.payload.meta;
+    case types.ROOM_ADD_PHOTO:
+      return {
+        ...state,
+        photos: [
+          ...state.photos,
+          action.payload,
+        ],
+      };
+    case types.ROOM_REMOVE_PHOTO:
+      return {
+        ...state,
+        photos: state.photos.filter(({ _id }) => (_id !== action.payload.photo)),
+      };
     case types.ROOM_RESET:
       return {};
     default:
@@ -95,6 +108,20 @@ const peers = (
   }
 };
 
+const socket = (
+  state = false,
+  action
+) => {
+  switch (action.type) {
+    case types.ROOM_JOIN:
+      return action.payload.socket;
+    case types.ROOM_RESET:
+      return false;
+    default:
+      return state;
+  }
+};
+
 const stream = (
   state = false,
   action
@@ -141,6 +168,7 @@ const roomReducer = combineReducers({
   hasJoined,
   meta,
   peers,
+  socket,
   stream,
   video,
 });

@@ -46,6 +46,10 @@ render(
   mount
 );
 
+window.addEventListener('contextmenu', e => (
+  e.preventDefault()
+), false);
+
 if (!__PRODUCTION__ && module.hot) {
   module.hot.accept('@/locales', () => reloadLocales(store));
   module.hot.accept('@/reducers', () => store.replaceReducer(rootReducer));
