@@ -7,6 +7,13 @@ export function addPhoto({ _id, origin, photo }) {
   };
 }
 
+export function movePhoto({ origin, photo }) {
+  return {
+    type: types.ROOM_MOVE_PHOTO,
+    payload: { origin, photo },
+  };
+}
+
 export function join({ meta, peers, socket }) {
   return {
     type: types.ROOM_JOIN,

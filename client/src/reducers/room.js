@@ -31,6 +31,22 @@ const meta = (
           action.payload,
         ],
       };
+    case types.ROOM_MOVE_PHOTO:
+      return {
+        ...state,
+        photos: state.photos.map((photo) => {
+          if (photo._id === action.payload.photo) {
+            return {
+              ...photo,
+              origin: {
+                x: action.payload.origin.x,
+                y: action.payload.origin.y,
+              },
+            };
+          }
+          return photo;
+        }),
+      };
     case types.ROOM_REMOVE_PHOTO:
       return {
         ...state,

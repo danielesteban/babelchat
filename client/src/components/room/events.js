@@ -7,6 +7,7 @@ import Peer from 'simple-peer';
 import {
   addPhoto,
   join,
+  movePhoto,
   removePhoto,
   reset,
   peerJoin,
@@ -115,6 +116,7 @@ class Events extends Component {
     const {
       addPhoto,
       join,
+      movePhoto,
       peerJoin,
       peerLeave,
       peerSignal,
@@ -129,6 +131,9 @@ class Events extends Component {
     switch (event.type) {
       case types.ROOM_ADD_PHOTO:
         addPhoto(event.payload);
+        break;
+      case types.ROOM_MOVE_PHOTO:
+        movePhoto(event.payload);
         break;
       case types.ROOM_REMOVE_PHOTO:
         removePhoto(event.payload);
@@ -187,6 +192,7 @@ Events.propTypes = {
   addPhoto: PropTypes.func.isRequired,
   hideLoading: PropTypes.func.isRequired,
   join: PropTypes.func.isRequired,
+  movePhoto: PropTypes.func.isRequired,
   removePhoto: PropTypes.func.isRequired,
   reset: PropTypes.func.isRequired,
   peerJoin: PropTypes.func.isRequired,
@@ -203,6 +209,7 @@ export default connect(
     addPhoto,
     hideLoading,
     join,
+    movePhoto,
     removePhoto,
     reset,
     peerJoin,
