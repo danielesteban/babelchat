@@ -12,7 +12,6 @@ class Canvas extends Component {
   componentDidMount() {
     window.addEventListener('resize', this.onResize, false);
     this.onResize();
-    this.draw();
   }
 
   shouldComponentUpdate() {
@@ -27,6 +26,7 @@ class Canvas extends Component {
     const { dom: { current: canvas } } = this;
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+    this.draw();
   }
 
   draw() {
