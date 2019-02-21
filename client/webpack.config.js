@@ -176,6 +176,10 @@ module.exports = {
       template: path.join(srcPath, 'index.ejs'),
       title: 'BabelChat',
     }),
+    new webpack.IgnorePlugin({
+      resourceRegExp: /^\.\/locale$/,
+      contextRegExp: /moment$/,
+    }),
     new MiniCssExtractPlugin({
       filename: 'code/[name].[contenthash].css',
     }),
