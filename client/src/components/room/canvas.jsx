@@ -109,6 +109,8 @@ class Canvas extends Component {
     const intersects = photos
       .filter(({ _id, origin }) => {
         const image = this.photos[_id];
+        // Filter it out if it hasn't been loaded
+        // yet into the cache as an Image object
         if (!image) {
           return false;
         }
@@ -119,8 +121,10 @@ class Canvas extends Component {
           || y < origin.y
           || y > origin.y + height
         ) {
+          // The pointer is outside the bounds
           return false;
         }
+        // We got a hit!
         return true;
       });
     // Reverse the filtered photos to get
