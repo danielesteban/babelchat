@@ -15,6 +15,7 @@ class Canvas extends Component {
     this.onPointerEnd = this.onPointerEnd.bind(this);
     this.onPointerWheel = this.onPointerWheel.bind(this);
     this.onResize = this.onResize.bind(this);
+    this.origin = { x: 0, y: 0 };
     this.photos = {};
     this.scale = 1;
   }
@@ -87,6 +88,7 @@ class Canvas extends Component {
     const { meta: { photos }, socket } = this.props;
     const button = e.button || 0;
     const { x, y } = this.getPointer(pointer);
+    // Get photo at pointer
     const intersects = photos
       .filter(({ _id, origin }) => {
         const image = this.photos[_id];
@@ -104,10 +106,14 @@ class Canvas extends Component {
         }
         return true;
       });
+    // Reverse the filtered photos to get
+    // the one renderded on top first
     intersects.reverse();
     const photo = intersects[0];
+    // Pointer is on top of a photo
     if (photo) {
       switch (button) {
+        // Left click moves the photo
         case 0:
           this.dragging = {
             offset: {
@@ -117,6 +123,7 @@ class Canvas extends Component {
             photo,
           };
           break;
+        // Right click removes the photo
         case 2:
           socket.send(JSON.stringify({
             type: 'ROOM/REMOVE_PHOTO',
@@ -128,26 +135,41 @@ class Canvas extends Component {
         default:
           break;
       }
+    } else if (button === 2) {
+      // Right click anywhere else moves the canvas origin
+      this.dragging = {
+        canvas: pointer,
+      };
     }
   }
 
   onPointerMove(e, pointer) {
-    const { dragging } = this;
+    const { dragging, origin, scale } = this;
     if (!dragging) {
       return;
     }
-    const { offset, photo } = dragging;
-    const { x, y } = this.getPointer(pointer);
-    photo.origin.x = x + offset.x;
-    photo.origin.y = y + offset.y;
+    if (dragging.canvas) {
+      origin.x += (pointer[0] - dragging.canvas[0]) / scale;
+      origin.y += (pointer[1] - dragging.canvas[1]) / scale;
+      dragging.canvas = pointer;
+    }
+    if (dragging.photo) {
+      const { offset, photo } = dragging;
+      const { x, y } = this.getPointer(pointer);
+      photo.origin.x = x + offset.x;
+      photo.origin.y = y + offset.y;
+    }
     this.draw();
   }
 
   onPointerEnd() {
     const { dragging } = this;
     const { socket } = this.props;
+    if (!dragging) {
+      return;
+    }
     delete this.dragging;
-    if (dragging) {
+    if (dragging.photo) {
       const { _id: photo, origin } = dragging.photo;
       socket.send(JSON.stringify({
         type: 'ROOM/MOVE_PHOTO',
@@ -174,10 +196,10 @@ class Canvas extends Component {
   }
 
   getPointer([x, y]) {
-    const { dom: { current: canvas }, scale } = this;
+    const { dom: { current: canvas }, origin, scale } = this;
     return {
-      x: (x - (canvas.width * 0.5)) / scale,
-      y: (y - (canvas.height * 0.5)) / scale,
+      x: ((x - (canvas.width * 0.5)) / scale) - origin.x,
+      y: ((y - (canvas.height * 0.5)) / scale) - origin.y,
     };
   }
 
@@ -195,12 +217,13 @@ class Canvas extends Component {
   }
 
   draw(props) {
-    const { dom: { current: canvas }, scale } = this;
+    const { dom: { current: canvas }, origin, scale } = this;
     const { meta: { name, photos } } = props || this.props;
     const ctx = canvas.getContext('2d');
     canvas.width = canvas.width;
     ctx.translate(canvas.width * 0.5, canvas.height * 0.5);
     ctx.scale(scale, scale);
+    ctx.translate(origin.x, origin.y);
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillStyle = '#999';
