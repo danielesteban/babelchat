@@ -86,60 +86,62 @@ class Canvas extends Component {
 
   onPointerStart(e, pointer) {
     const { meta: { photos }, socket } = this.props;
-    const button = e.button || 0;
-    const { x, y } = this.getPointer(pointer);
-    // Get photo at pointer
-    const intersects = photos
-      .filter(({ _id, origin }) => {
-        const image = this.photos[_id];
-        if (!image) {
-          return false;
+    switch (e.button || 0) {
+      case 0: {
+        // Left click moves/removes photos
+        const { x, y } = this.getPointer(pointer);
+        // Get photo at pointer
+        const intersects = photos
+          .filter(({ _id, origin }) => {
+            const image = this.photos[_id];
+            if (!image) {
+              return false;
+            }
+            const { width, height } = image;
+            if (
+              x < origin.x
+              || x > origin.x + width
+              || y < origin.y
+              || y > origin.y + height
+            ) {
+              return false;
+            }
+            return true;
+          });
+        // Reverse the filtered photos to get
+        // the one renderded on top first
+        intersects.reverse();
+        const photo = intersects[0];
+        if (photo) {
+          if (e.shiftKey) {
+            // Shift-Click removes the photo
+            socket.send(JSON.stringify({
+              type: 'ROOM/REMOVE_PHOTO',
+              payload: {
+                photo: photo._id,
+              },
+            }));
+          } else {
+            // Click moves the photo
+            this.dragging = {
+              offset: {
+                x: photo.origin.x - x,
+                y: photo.origin.y - y,
+              },
+              photo,
+            };
+          }
         }
-        const { width, height } = image;
-        if (
-          x < origin.x
-          || x > origin.x + width
-          || y < origin.y
-          || y > origin.y + height
-        ) {
-          return false;
-        }
-        return true;
-      });
-    // Reverse the filtered photos to get
-    // the one renderded on top first
-    intersects.reverse();
-    const photo = intersects[0];
-    // Pointer is on top of a photo
-    if (photo) {
-      switch (button) {
-        // Left click moves the photo
-        case 0:
-          this.dragging = {
-            offset: {
-              x: photo.origin.x - x,
-              y: photo.origin.y - y,
-            },
-            photo,
-          };
-          break;
-        // Right click removes the photo
-        case 2:
-          socket.send(JSON.stringify({
-            type: 'ROOM/REMOVE_PHOTO',
-            payload: {
-              photo: photo._id,
-            },
-          }));
-          break;
-        default:
-          break;
+        break;
       }
-    } else if (button === 2) {
-      // Right click anywhere else moves the canvas origin
-      this.dragging = {
-        canvas: pointer,
-      };
+      case 2:
+        // Right click moves the canvas origin
+        this.dragging = {
+          canvas: pointer,
+        };
+        break;
+      default:
+        break;
     }
   }
 
@@ -182,7 +184,7 @@ class Canvas extends Component {
   }
 
   onPointerWheel({ deltaY }) {
-    const normalized = 1 + (Math.min(Math.max(-deltaY, -1), 1) * 0.1);
+    const normalized = 1 + (Math.min(Math.max(-deltaY, -1), 1) * 0.075);
     this.scale *= normalized;
     this.scale = Math.min(Math.max(this.scale, 0.25), 2);
     this.draw();
