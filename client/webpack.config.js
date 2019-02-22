@@ -13,7 +13,7 @@ const modulesPath = path.resolve(__dirname, 'node_modules');
 const srcPath = path.resolve(__dirname, 'src');
 const outputPath = path.resolve(__dirname, 'dist');
 const mode = process.env.NODE_ENV === 'production' ? 'production' : 'development';
-const api = process.env.API || 'http://localhost:8081/';
+const api = process.env.API || (mode === 'production' ? 'https://api.babelchat.tk/' : 'http://localhost:8081/');
 const basename = process.env.BASENAME || '/';
 
 let version;
