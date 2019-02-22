@@ -100,6 +100,8 @@ const photos = (
   action
 ) => {
   switch (action.type) {
+    case types.ROOM_JOIN:
+      return action.payload.photos;
     case types.ROOM_ADD_PHOTO:
       return [
         ...state,
