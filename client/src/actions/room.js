@@ -14,10 +14,20 @@ export function movePhoto({ origin, photo }) {
   };
 }
 
-export function join({ meta, peers, socket }) {
+export function join({
+  name,
+  peers,
+  photos,
+  socket,
+}) {
   return {
     type: types.ROOM_JOIN,
-    payload: { meta, peers, socket },
+    payload: {
+      name,
+      peers,
+      photos,
+      socket,
+    },
   };
 }
 

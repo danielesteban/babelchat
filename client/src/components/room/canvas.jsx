@@ -10,35 +10,44 @@ class Canvas extends Component {
     super(props);
     this.dom = React.createRef();
     this.onDrop = this.onDrop.bind(this);
-    this.onPointerStart = this.onPointerStart.bind(this);
-    this.onPointerMove = this.onPointerMove.bind(this);
-    this.onPointerEnd = this.onPointerEnd.bind(this);
     this.onPointerWheel = this.onPointerWheel.bind(this);
     this.onResize = this.onResize.bind(this);
+    // This is what controls the viewport translation
     this.origin = { x: 0, y: 0 };
-    this.photos = {};
+    // This is what controls the viewport scaling
     this.scale = 1;
+    // The state has the photos as a base64 string
+    // We need to load the as Image objects in order to call renderImage
+    // (and also to extract their width & height for intersection testing)
+    // This is where we cache the loaded Image objects
+    this.photos = {};
   }
 
   componentDidMount() {
     const { dom: { current: canvas } } = this;
+    // Load the inital set of photos
     this.loadPhotos(this.props);
+    // Bind the events
     canvas.addEventListener('dragover', Canvas.onDragOver, false);
     canvas.addEventListener('drop', this.onDrop, false);
     window.addEventListener('resize', this.onResize, false);
-    this.onResize();
     this.touches = Touches(window, {
       filtered: true,
       preventSimulated: false,
     })
-      .on('start', this.onPointerStart)
-      .on('move', this.onPointerMove)
-      .on('end', this.onPointerEnd);
+      .on('start', this.onPointerStart.bind(this))
+      .on('move', this.onPointerMove.bind(this))
+      .on('end', this.onPointerEnd.bind(this));
     addWheelListener(window, this.onPointerWheel);
+    // Initial resize (this will also call the initial draw)
+    this.onResize();
   }
 
   componentWillReceiveProps(props) {
+    // The redux state has changed...
+    // Load photos as Image objects and store them in the cache
     this.loadPhotos(props);
+    // Redraw
     this.draw(props);
   }
 
@@ -47,12 +56,14 @@ class Canvas extends Component {
   }
 
   componentWillUnmount() {
-    const { dom: { current: canvas } } = this;
+    const { dom: { current: canvas }, touches } = this;
+    // We're unloading the room
+    // Unbind all event handlers
+    touches.disable();
     canvas.removeEventListener('dragover', Canvas.onDragOver);
     canvas.removeEventListener('drop', this.onDrop);
-    window.removeEventListener('resize', this.onResize);
-    this.touches.disable();
     removeWheelListener(window, this.onPointerWheel);
+    window.removeEventListener('resize', this.onResize);
   }
 
   static onDragOver(e) {
@@ -60,6 +71,7 @@ class Canvas extends Component {
   }
 
   onDrop(e) {
+    // The user dropped a file into the canvas
     const { socket } = this.props;
     const {
       clientX,
@@ -67,12 +79,16 @@ class Canvas extends Component {
       dataTransfer: { files: [file] },
     } = e;
     e.preventDefault();
+    // We're only interested in files
     if (!file) {
       return;
     }
+    // Get the screen-space pointer in room-space
     const origin = this.getPointer([clientX, clientY]);
+    // Read the file
     const reader = new FileReader();
     reader.onload = () => {
+      // Once it loads, send it to the room server:
       socket.send(JSON.stringify({
         type: 'ROOM/ADD_PHOTO',
         payload: {
@@ -85,7 +101,7 @@ class Canvas extends Component {
   }
 
   onPointerStart(e, pointer) {
-    const { meta: { photos }, socket } = this.props;
+    const { photos, socket } = this.props;
     const button = e.button || 0;
     const { x, y } = this.getPointer(pointer);
 
@@ -152,16 +168,19 @@ class Canvas extends Component {
       return;
     }
     if (dragging.canvas) {
+      // Translate the canvas origin
       origin.x += (pointer[0] - dragging.canvas[0]) / scale;
       origin.y += (pointer[1] - dragging.canvas[1]) / scale;
       dragging.canvas = pointer;
     }
     if (dragging.photo) {
+      // Translate the photo
       const { offset, photo } = dragging;
       const { x, y } = this.getPointer(pointer);
       photo.origin.x = x + offset.x;
       photo.origin.y = y + offset.y;
     }
+    // Redraw
     this.draw();
   }
 
@@ -173,6 +192,8 @@ class Canvas extends Component {
     }
     delete this.dragging;
     if (dragging.photo) {
+      // Send the final translation to the server
+      // So it gets saved into the db and broadcasted to the peers
       const { _id: photo, origin } = dragging.photo;
       socket.send(JSON.stringify({
         type: 'ROOM/MOVE_PHOTO',
@@ -185,20 +206,25 @@ class Canvas extends Component {
   }
 
   onPointerWheel({ deltaY }) {
+    // Zoom the canvas in and out when the mouse wheel moves
     const normalized = 1 + (Math.min(Math.max(-deltaY, -1), 1) * 0.075);
     this.scale *= normalized;
     this.scale = Math.min(Math.max(this.scale, 0.25), 2);
+    // Redraw
     this.draw();
   }
 
   onResize() {
+    // Resize the canvas
     const { dom: { current: canvas } } = this;
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+    // Redraw
     this.draw();
   }
 
   getPointer([x, y]) {
+    // Convert coordinates from screen-space to room-space
     const { dom: { current: canvas }, origin, scale } = this;
     return {
       x: ((x - (canvas.width * 0.5)) / scale) - origin.x,
@@ -206,12 +232,15 @@ class Canvas extends Component {
     };
   }
 
-  loadPhotos({ meta: { photos } }) {
+  loadPhotos({ photos }) {
+    // Go through all the photos in the redux state
     photos.forEach(({ _id, photo }) => {
+      // If it's not in the cache, load it as an Image object
       if (!this.photos[_id]) {
         const img = new Image();
         img.src = `data:image/jpeg;base64,${photo}`;
         img.onload = () => (
+          // Redraw once it's loaded into the cache
           this.draw()
         );
         this.photos[_id] = img;
@@ -221,19 +250,27 @@ class Canvas extends Component {
 
   draw(props) {
     const { dom: { current: canvas }, origin, scale } = this;
-    const { meta: { name, photos } } = props || this.props;
+    const { name, photos } = props || this.props;
     const ctx = canvas.getContext('2d');
     canvas.width = canvas.width;
+    // Room-space coordinates start at the middle of the canvas
     ctx.translate(canvas.width * 0.5, canvas.height * 0.5);
+    // Apply user scale
     ctx.scale(scale, scale);
+    // Apply user translation
     ctx.translate(origin.x, origin.y);
+    // Draw Room name at 0,0
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillStyle = '#999';
     ctx.font = '32px Arial';
     ctx.fillText(I18n.t('Room.welcome', { name }), 0, 0);
+    // Go through all the photos in the redux state
     photos.forEach(({ _id, origin }) => {
+      // Check the cache to see if the photo has been
+      // already loaded as an Image object by "loadPhotos"
       if (this.photos[_id]) {
+        // Draw the cached Image object
         ctx.drawImage(this.photos[_id], origin.x, origin.y);
       }
     });
@@ -248,19 +285,18 @@ class Canvas extends Component {
 }
 
 Canvas.propTypes = {
-  meta: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    photos: PropTypes.arrayOf(PropTypes.shape({
-      origin: PropTypes.shape({
-        x: PropTypes.number.isRequired,
-        y: PropTypes.number.isRequired,
-      }),
-      photo: PropTypes.string.isRequired,
-    })).isRequired,
-  }).isRequired,
+  // eslint-disable-next-line react/no-unused-prop-types
+  name: PropTypes.string.isRequired,
+  photos: PropTypes.arrayOf(PropTypes.shape({
+    origin: PropTypes.shape({
+      x: PropTypes.number.isRequired,
+      y: PropTypes.number.isRequired,
+    }),
+    photo: PropTypes.string.isRequired,
+  })).isRequired,
   socket: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]).isRequired,
 };
 
 export default connect(
-  ({ room: { meta, socket } }) => ({ meta, socket })
+  ({ room: { name, photos, socket } }) => ({ name, photos, socket })
 )(Canvas);

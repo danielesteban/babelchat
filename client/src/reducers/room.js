@@ -16,44 +16,15 @@ const hasJoined = (
   }
 };
 
-const meta = (
-  state = {},
+const name = (
+  state = '',
   action
 ) => {
   switch (action.type) {
     case types.ROOM_JOIN:
-      return action.payload.meta;
-    case types.ROOM_ADD_PHOTO:
-      return {
-        ...state,
-        photos: [
-          ...state.photos,
-          action.payload,
-        ],
-      };
-    case types.ROOM_MOVE_PHOTO:
-      return {
-        ...state,
-        photos: state.photos.map((photo) => {
-          if (photo._id === action.payload.photo) {
-            return {
-              ...photo,
-              origin: {
-                x: action.payload.origin.x,
-                y: action.payload.origin.y,
-              },
-            };
-          }
-          return photo;
-        }),
-      };
-    case types.ROOM_REMOVE_PHOTO:
-      return {
-        ...state,
-        photos: state.photos.filter(({ _id }) => (_id !== action.payload.photo)),
-      };
+      return action.payload.name;
     case types.ROOM_RESET:
-      return {};
+      return '';
     default:
       return state;
   }
@@ -124,6 +95,38 @@ const peers = (
   }
 };
 
+const photos = (
+  state = [],
+  action
+) => {
+  switch (action.type) {
+    case types.ROOM_ADD_PHOTO:
+      return [
+        ...state,
+        action.payload,
+      ];
+    case types.ROOM_MOVE_PHOTO:
+      return state.map((photo) => {
+        if (photo._id === action.payload.photo) {
+          return {
+            ...photo,
+            origin: {
+              x: action.payload.origin.x,
+              y: action.payload.origin.y,
+            },
+          };
+        }
+        return photo;
+      });
+    case types.ROOM_REMOVE_PHOTO:
+      return state.filter(({ _id }) => (_id !== action.payload.photo));
+    case types.ROOM_RESET:
+      return [];
+    default:
+      return state;
+  }
+};
+
 const socket = (
   state = false,
   action
@@ -182,8 +185,9 @@ const video = (
 
 const roomReducer = combineReducers({
   hasJoined,
-  meta,
+  name,
   peers,
+  photos,
   socket,
   stream,
   video,

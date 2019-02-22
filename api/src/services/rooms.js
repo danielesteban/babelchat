@@ -58,14 +58,7 @@ class Room {
     peer.send(JSON.stringify({
       type: 'ROOM/JOIN',
       payload: {
-        meta: {
-          name: meta.name,
-          photos: meta.photos.map(({ _id, origin, photo }) => ({
-            _id,
-            origin,
-            photo: photo.toString('base64'),
-          })),
-        },
+        name: meta.name,
         peers: peers
           .reduce((peers, { id, user }) => {
             if (!user._id.equals(_id)) {
@@ -77,6 +70,11 @@ class Room {
             }
             return peers;
           }, []),
+        photos: meta.photos.map(({ _id, origin, photo }) => ({
+          _id,
+          origin,
+          photo: photo.toString('base64'),
+        })),
       },
     }), () => {});
     peers.push(peer);
