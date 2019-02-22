@@ -22,7 +22,6 @@ import API from '@/services/api';
 class Events extends Component {
   constructor(props) {
     super(props);
-    this.onDrop = this.onDrop.bind(this);
     this.onMessage = this.onMessage.bind(this);
   }
 
@@ -58,9 +57,6 @@ class Events extends Component {
     })
       .then(startStream)
       .catch((err) => { console.log(err); });
-
-    document.addEventListener('dragover', Events.onDragOver, false);
-    document.addEventListener('drop', this.onDrop, false);
   }
 
   shouldComponentUpdate() {
@@ -75,40 +71,6 @@ class Events extends Component {
     }
     socket.close(1000);
     reset();
-    document.removeEventListener('dragover', Events.onDragOver);
-    document.removeEventListener('drop', this.onDrop);
-  }
-
-  static onDragOver(e) {
-    e.preventDefault();
-  }
-
-  onDrop(e) {
-    const { socket } = this;
-    const {
-      clientX,
-      clientY,
-      dataTransfer: { files: [file] },
-    } = e;
-    e.preventDefault();
-    if (!file) {
-      return;
-    }
-    const origin = {
-      x: clientX - (window.innerWidth * 0.5),
-      y: clientY - (window.innerHeight * 0.5),
-    };
-    const reader = new FileReader();
-    reader.onload = () => {
-      socket.send(JSON.stringify({
-        type: 'ROOM/ADD_PHOTO',
-        payload: {
-          origin,
-          photo: reader.result.substr(reader.result.indexOf('base64') + 7),
-        },
-      }));
-    };
-    reader.readAsDataURL(file);
   }
 
   onMessage({ data }) {
