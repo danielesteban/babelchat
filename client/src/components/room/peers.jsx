@@ -26,7 +26,7 @@ const Peers = ({ peers }) => (
       peer,
       video,
     }) => (
-      video ? (
+      video && video.srcObject.getVideoTracks().length ? (
         <Video
           key={peer}
           video={video}

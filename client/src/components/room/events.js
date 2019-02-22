@@ -56,7 +56,15 @@ class Events extends Component {
       },
     })
       .then(startStream)
-      .catch((err) => { console.log(err); });
+      .catch(() => {
+        // Failed to get video stream.. Try with just audio
+        navigator.mediaDevices.getUserMedia({
+          audio: true,
+          video: false,
+        })
+          .then(startStream)
+          .catch(() => {});
+      });
   }
 
   shouldComponentUpdate() {

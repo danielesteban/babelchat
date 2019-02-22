@@ -57,7 +57,7 @@ const Session = ({
   isAuth ? (
     <Wrapper>
       <div className="toggle">
-        {video ? (
+        {video && video.srcObject.getVideoTracks().length ? (
           <Video
             video={video}
           />
