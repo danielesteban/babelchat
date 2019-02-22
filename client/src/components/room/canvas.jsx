@@ -86,62 +86,63 @@ class Canvas extends Component {
 
   onPointerStart(e, pointer) {
     const { meta: { photos }, socket } = this.props;
-    switch (e.button || 0) {
-      case 0: {
-        // Left click moves/removes photos
-        const { x, y } = this.getPointer(pointer);
-        // Get photo at pointer
-        const intersects = photos
-          .filter(({ _id, origin }) => {
-            const image = this.photos[_id];
-            if (!image) {
-              return false;
-            }
-            const { width, height } = image;
-            if (
-              x < origin.x
-              || x > origin.x + width
-              || y < origin.y
-              || y > origin.y + height
-            ) {
-              return false;
-            }
-            return true;
-          });
-        // Reverse the filtered photos to get
-        // the one renderded on top first
-        intersects.reverse();
-        const photo = intersects[0];
-        if (photo) {
-          if (e.shiftKey) {
-            // Shift-Click removes the photo
-            socket.send(JSON.stringify({
-              type: 'ROOM/REMOVE_PHOTO',
-              payload: {
-                photo: photo._id,
-              },
-            }));
-          } else {
-            // Click moves the photo
-            this.dragging = {
-              offset: {
-                x: photo.origin.x - x,
-                y: photo.origin.y - y,
-              },
-              photo,
-            };
-          }
+    const button = e.button || 0;
+    const { x, y } = this.getPointer(pointer);
+
+    // Get photo at pointer
+    const intersects = photos
+      .filter(({ _id, origin }) => {
+        const image = this.photos[_id];
+        if (!image) {
+          return false;
         }
-        break;
-      }
-      case 2:
-        // Right click moves the canvas origin
+        const { width, height } = image;
+        if (
+          x < origin.x
+          || x > origin.x + width
+          || y < origin.y
+          || y > origin.y + height
+        ) {
+          return false;
+        }
+        return true;
+      });
+    // Reverse the filtered photos to get
+    // the one renderded on top first
+    intersects.reverse();
+    const photo = intersects[0];
+
+    if (
+      // Clicking the canvas (or right click)
+      // will drag it's origin
+      (button === 0 && !photo)
+      || (button === 2)
+    ) {
+      this.dragging = {
+        canvas: pointer,
+      };
+    } else if (
+      // Left click drags/removes photos
+      button === 0 && photo
+    ) {
+      if (e.shiftKey) {
+        // Shift+Click will remove the photo
+        socket.send(JSON.stringify({
+          type: 'ROOM/REMOVE_PHOTO',
+          payload: {
+            photo: photo._id,
+          },
+        }));
+      } else {
+        // Left click will drag the photo
         this.dragging = {
-          canvas: pointer,
+          offset: {
+            x: photo.origin.x - x,
+            y: photo.origin.y - y,
+          },
+          photo,
         };
-        break;
-      default:
-        break;
+      }
     }
   }
 
