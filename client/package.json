@@ -6,7 +6,7 @@
     "start": "webpack-dev-server",
     "build": "cross-env NODE_ENV=production webpack",
     "build:report": "npm run build --report",
-    "deploy": "gh-pages -d client/dist -u \"Travis CI <travis@travis-ci.org>\""
+    "deploy": "gh-pages -d dist -u \"Travis CI <travis@travis-ci.org>\""
   },
   "dependencies": {
     "deep-diff": "^1.0.2",
