@@ -252,6 +252,7 @@ class Canvas extends Component {
     const { dom: { current: canvas }, origin, scale } = this;
     const { name, photos } = props || this.props;
     const ctx = canvas.getContext('2d');
+    // Reset canvas context
     canvas.width = canvas.width;
     // Room-space coordinates start at the middle of the canvas
     ctx.translate(canvas.width * 0.5, canvas.height * 0.5);
@@ -259,7 +260,7 @@ class Canvas extends Component {
     ctx.scale(scale, scale);
     // Apply user translation
     ctx.translate(origin.x, origin.y);
-    // Draw Room name at 0,0
+    // Draw room name at 0,0
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillStyle = '#999';
