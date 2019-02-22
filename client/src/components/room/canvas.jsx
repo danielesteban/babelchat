@@ -239,7 +239,7 @@ class Canvas extends Component {
   loadPhotos({ photos }) {
     // Go through all the photos in the redux state
     photos.forEach(({ _id, photo }) => {
-      // If it's not in the cache, load it as an Image object
+      // If it's not already in the cache, load it as an Image object
       if (!this.photos[_id]) {
         const img = new Image();
         img.src = `data:image/jpeg;base64,${photo}`;
