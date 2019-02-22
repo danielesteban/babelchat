@@ -3,20 +3,14 @@
 
 > Language Exchange OpenSource Platform
 
-<div align="center">
-  <!-- Build Status -->
-  <a href="https://travis-ci.org/danielesteban/babelchat">
-    <img src="https://travis-ci.org/danielesteban/babelchat.svg?branch=master" alt="Build Status" />
-  </a>
-  <!-- Dependency Status -->
-  <a href="https://david-dm.org/danielesteban/babelchat">
-    <img src="https://david-dm.org/danielesteban/babelchat/status.svg" alt="Dependency Status" />
-  </a>
-  <!-- devDependency Status -->
-  <a href="https://david-dm.org/danielesteban/babelchat?type=dev">
-    <img src="https://david-dm.org/danielesteban/babelchat/dev-status.svg" alt="devDependency Status" />
-  </a>
-</div>
+<!-- Dependency Status -->
+<a href="https://david-dm.org/danielesteban/babelchat">
+  <img src="https://david-dm.org/danielesteban/babelchat/status.svg" alt="Dependency Status" />
+</a>
+<!-- devDependency Status -->
+<a href="https://david-dm.org/danielesteban/babelchat?type=dev">
+  <img src="https://david-dm.org/danielesteban/babelchat/dev-status.svg" alt="devDependency Status" />
+</a>
 
 #### Dev environment
 
