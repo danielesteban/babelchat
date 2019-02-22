@@ -10,6 +10,7 @@ const Listing = styled.div`
   top: 100px;
   right: 0;
   > img, > div > video {
+    display: block;
     background: #000;
     width: 100px;
     height: 100px;
