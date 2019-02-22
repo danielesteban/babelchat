@@ -1,0 +1,18 @@
+language: node_js
+node_js: lts/*
+cache:
+  yarn: true
+  directories:
+  - node_modules
+env:
+  global:
+  - secure: SnsWHZuuFu3RY1Dt8EvjrQz1NOSKCyrLHqGpwQsbmZX9Fnjl2R3hv9BNZwqITd5Lm64s8PWteW3WRW0NlaYBUMg9uP0u5WAuIcGoX4BpwVG8pe0hSNWP3Kbeh+k31PBpbJyq5T8vvQlDRzpDHQrhE4nnQEXKER+lXc1aw5VPOrTzRRcrm1+Ifesxv6Eywam3z4bUuvYzmv+BoSdB0Q1D7j2cpnmntUIgoYAMAJpmFlay9wdHP0IDQ6dVq/TnQQs+XRBSE3soDBscNRfcUN42wtRmi07BOJH3xHwgX4BXT3gSn7JEdecI9y+XlHxNy9oa57kL4I5R5NvR8krJvrWBR9oSNlsfFwf4RJSi0l81wnRG9UZnPTQ7/r47HVnjdUpTDjlKKfxwMD1FFy2Xhq8M6lEosdSKzBsoLigy3CIGRAT6BIzSRldIx00N4K1zlrWU+phGYBs6TnlcrY4DaiDup402OTZSocEEnFccruii2A2rSJlvHJy90cA2BxcWeEIQ0OnPoydvfCNt0ifyab+Huo8PLAo8qxoq+bOKnhMOMbV5fiuHXSauFvqKrX2QbXkIL3UopDlcoKsqPeA6UDdJ64mHR9pqvoCEG0TMOCP2YAen6lfhzPeeHgZTPixE/QBKhSW3WcHo/LWNSBiwycGZsLu+jjgNZke1JIc3xCnOkCI=
+script:
+- npm run lint
+- npm --prefix client run build
+deploy:
+  on:
+    branch: master
+  provider: script
+  script: npm --prefix client run deploy -r https://${GITHUB_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git
+  skip_cleanup: true
