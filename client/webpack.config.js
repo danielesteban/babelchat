@@ -189,7 +189,7 @@ module.exports = {
       new RobotstxtPlugin({
         policy: [{
           userAgent: '*',
-          disallow: '/',
+          allow: '/',
         }],
       }),
       new webpack.SourceMapDevToolPlugin({
