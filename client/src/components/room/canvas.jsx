@@ -17,7 +17,7 @@ class Canvas extends Component {
     // This is what controls the viewport scaling
     this.scale = 1;
     // The photos in the state are stored as a base64 string
-    // We need to load the as Image objects in order to call renderImage
+    // We need to load the as Image objects in order to call ctx.drawImage
     // (and also to extract their width & height for intersection testing)
     // This is where we cache the loaded Image objects
     this.photos = {};
