@@ -8,7 +8,6 @@ const swaggerSpec = swaggerJSDoc({
     components: {
       securitySchemes: {
         SessionToken: {
-          description: 'Send a POST to "/user" and paste your session token here: (without the double qoutes)',
           type: 'http',
           scheme: 'bearer',
           bearerFormat: 'JWT',
