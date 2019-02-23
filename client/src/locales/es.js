@@ -4,6 +4,7 @@ export default {
     goBack: 'Vplver al inicio',
   },
   Room: {
+    joining: 'Entrando en la habitación...',
     welcome: 'Bienvenido a: "%{name}"',
   },
   Rooms: {

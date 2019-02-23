@@ -4,6 +4,7 @@ export default {
     goBack: 'Take me back home',
   },
   Room: {
+    joining: 'Joining room...',
     welcome: 'Welcome to: "%{name}"',
   },
   Rooms: {

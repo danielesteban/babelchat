@@ -2,20 +2,6 @@ import { combineReducers } from 'redux';
 import * as types from '@/actions/types';
 import WaitForFirstInteraction from '@/services/firstInteraction';
 
-const hasJoined = (
-  state = false,
-  action
-) => {
-  switch (action.type) {
-    case types.ROOM_JOIN:
-      return true;
-    case types.ROOM_RESET:
-      return false;
-    default:
-      return state;
-  }
-};
-
 const name = (
   state = '',
   action
@@ -186,7 +172,6 @@ const video = (
 };
 
 const roomReducer = combineReducers({
-  hasJoined,
   name,
   peers,
   photos,

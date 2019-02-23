@@ -269,7 +269,7 @@ class Canvas extends Component {
     ctx.textBaseline = 'middle';
     ctx.fillStyle = '#999';
     ctx.font = '32px Arial';
-    ctx.fillText(I18n.t('Room.welcome', { name }), 0, 0);
+    ctx.fillText(I18n.t(`Room.${name ? 'welcome' : 'joining'}`, { name }), 0, 0);
     // Go through all the photos in the redux state
     photos.forEach(({ _id, origin }) => {
       // Check the cache to see if the photo has been
