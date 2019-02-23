@@ -27,12 +27,18 @@ module.exports.join = (peer, req) => {
     .findOne({ slug: req.params.slug })
     .then((room) => {
       if (!room) {
-        peer.close();
+        peer.send(JSON.stringify({
+          type: 'ROOM/NOT_FOUND',
+        }), () => {});
+        peer.close(1000);
         return;
       }
       Rooms(room).onOpen(peer);
     })
-    .catch(() => (
-      peer.close()
-    ));
+    .catch(() => {
+      peer.send(JSON.stringify({
+        type: 'ROOM/ERROR',
+      }), () => {});
+      peer.close(1000);
+    });
 };
