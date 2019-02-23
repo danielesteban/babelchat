@@ -2635,6 +2635,11 @@ gh-pages@^2.0.1:
     graceful-fs "^4.1.11"
     rimraf "^2.6.2"
 
+ghpages-spa-webpack-plugin@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/ghpages-spa-webpack-plugin/-/ghpages-spa-webpack-plugin-1.0.0.tgz#9d6c0e3e39f5deadbe393bb4ae8183b515372413"
+  integrity sha512-NfLJxwVAKiEBAaar/ghwCbWnnPZH/ZxQBpOKFuqZE/DTYKOEWnxIDIs3zflZFt/CAFHjC/wkE0yo9V9DILcz2w==
+
 glob-parent@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/glob-parent/-/glob-parent-3.1.0.tgz#9e6af6299d8d3bd2bd40430832bd113df906c5ae"

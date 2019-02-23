@@ -4,6 +4,7 @@ const path = require('path');
 const webpack = require('webpack');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const GHPagesSPAWebpackPlugin = require('ghpages-spa-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const RobotstxtPlugin = require('robotstxt-webpack-plugin');
@@ -15,6 +16,7 @@ const outputPath = path.resolve(__dirname, 'dist');
 const mode = process.env.NODE_ENV === 'production' ? 'production' : 'development';
 const api = process.env.API || (mode === 'production' ? 'https://api.babelchat.tk/' : 'http://localhost:8081/');
 const basename = process.env.BASENAME || '/';
+const domain = process.env.DOMAIN || 'babelchat.tk';
 
 let version;
 if (fs.existsSync(path.resolve(__dirname, '..', '.git'))) {
@@ -194,6 +196,9 @@ module.exports = {
           userAgent: '*',
           allow: '/',
         }],
+      }),
+      new GHPagesSPAWebpackPlugin({
+        domain,
       }),
       new webpack.SourceMapDevToolPlugin({
         test: /\.js$/,
