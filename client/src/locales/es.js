@@ -1,6 +1,6 @@
 export default {
   NotFound: {
-    defaultRoute: 'Esta no es la página que estás buscando.',
+    description: 'Esta no es la página que estás buscando.',
     goBack: 'Vplver al inicio',
   },
   Room: {

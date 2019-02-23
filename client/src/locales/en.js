@@ -1,6 +1,6 @@
 export default {
   NotFound: {
-    defaultRoute: 'This is not the web page you\'re looking for.',
+    description: 'This is not the web page you\'re looking for.',
     goBack: 'Take me back home',
   },
   Room: {

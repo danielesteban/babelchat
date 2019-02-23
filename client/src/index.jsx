@@ -1,4 +1,4 @@
-import { createBrowserHistory, createHashHistory } from 'history';
+import { createHashHistory } from 'history';
 import React from 'react';
 import { render } from 'react-dom';
 import { applyMiddleware, createStore, compose as productionCompose } from 'redux';
@@ -27,15 +27,7 @@ if (store.getState().session.isAuth) {
   store.dispatch(refreshToken());
 }
 
-let history;
-if (window.process && window.process.type) {
-  history = createHashHistory();
-} else {
-  history = createBrowserHistory({
-    basename: __BASENAME__,
-  });
-}
-
+const history = createHashHistory();
 const mount = document.getElementById('mount');
 render(
   <Provider store={store}>

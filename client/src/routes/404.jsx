@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import { TiArrowBack } from 'react-icons/ti';
 import { Translate } from 'react-redux-i18n';
@@ -33,37 +32,26 @@ const Alternative = styled.div`
   }
 `;
 
-const NotFound = ({ location: { state } }) => {
-  const from = state && state.from;
-  return (
-    <Wrapper>
-      <Status>
-        404
-      </Status>
-      <Description>
-        <Translate value={`NotFound.${from || 'default'}Route`} />
-      </Description>
-      <Alternative>
-        <Link to={{ pathname: `/${from || ''}` }}>
-          <Button
-            type="button"
-            primary
-          >
-            <TiArrowBack />
-            <Translate value="NotFound.goBack" />
-          </Button>
-        </Link>
-      </Alternative>
-    </Wrapper>
-  );
-};
-
-NotFound.propTypes = {
-  location: PropTypes.shape({
-    state: PropTypes.shape({
-      route: PropTypes.string,
-    }),
-  }).isRequired,
-};
+const NotFound = () => (
+  <Wrapper>
+    <Status>
+      404
+    </Status>
+    <Description>
+      <Translate value="NotFound.description" />
+    </Description>
+    <Alternative>
+      <Link to={{ pathname: '/' }}>
+        <Button
+          type="button"
+          primary
+        >
+          <TiArrowBack />
+          <Translate value="NotFound.goBack" />
+        </Button>
+      </Link>
+    </Alternative>
+  </Wrapper>
+);
 
 export default NotFound;
