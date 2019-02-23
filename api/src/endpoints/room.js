@@ -1,7 +1,7 @@
 const { Room } = require('../models');
 const Rooms = require('../services/rooms');
 
-module.exports.list = (req, res) => {
+module.exports.list = (req, res, next) => {
   Room
     .find()
     .select('-_id name slug')
@@ -13,7 +13,8 @@ module.exports.list = (req, res) => {
           peers: room ? room.peers.length : 0,
         };
       })
-    ));
+    ))
+    .catch(next);
 };
 
 module.exports.join = (peer, req) => {
@@ -30,5 +31,8 @@ module.exports.join = (peer, req) => {
         return;
       }
       Rooms(room).onOpen(peer);
-    });
+    })
+    .catch(() => (
+      peer.close()
+    ));
 };

@@ -2,8 +2,8 @@ const sharp = require('sharp');
 const uuid = require('uuid/v4');
 
 class Room {
-  constructor(meta) {
-    this.meta = meta;
+  constructor(db) {
+    this.db = db;
     this.peers = [];
   }
 
@@ -39,7 +39,7 @@ class Room {
   }
 
   onOpen(peer) {
-    const { meta, peers } = this;
+    const { db, peers } = this;
     const { _id, name } = peer.user;
     peer.id = uuid();
     this.broadcast({
@@ -58,7 +58,7 @@ class Room {
     peer.send(JSON.stringify({
       type: 'ROOM/JOIN',
       payload: {
-        name: meta.name,
+        name: db.name,
         peers: peers
           .reduce((peers, { id, user }) => {
             if (!user._id.equals(_id)) {
@@ -70,7 +70,7 @@ class Room {
             }
             return peers;
           }, []),
-        photos: meta.photos.map(({ _id, origin, photo }) => ({
+        photos: db.photos.map(({ _id, origin, photo }) => ({
           _id,
           origin,
           photo: photo.toString('base64'),
@@ -108,7 +108,7 @@ class Room {
   }
 
   onAddPhoto({ user: { _id: creator } }, { origin, photo: buffer }) {
-    const { meta } = this;
+    const { db } = this;
     const image = sharp(Buffer.from(buffer, 'base64'));
     image
       .rotate()
@@ -124,7 +124,7 @@ class Room {
           .jpeg({ quality: 85 })
           .toBuffer()
           .then((photo) => {
-            meta.photos.push({
+            db.photos.push({
               creator,
               origin: width > height ? ({
                 x: origin.x - (target * 0.5),
@@ -135,7 +135,7 @@ class Room {
               }),
               photo,
             });
-            return meta.save();
+            return db.save();
           });
       })
       .then(({ photos }) => {
@@ -155,12 +155,13 @@ class Room {
   }
 
   onMovePhoto(peer, { origin, photo }) {
-    const { meta } = this;
-    const index = meta.photos.findIndex(({ _id }) => (_id.equals(photo)));
+    const { db } = this;
+    const index = db.photos.findIndex(({ _id }) => (_id.equals(photo)));
     if (~index) {
-      meta.photos[index].origin.x = origin.x;
-      meta.photos[index].origin.y = origin.y;
-      meta.save();
+      db.photos[index].origin.x = origin.x;
+      db.photos[index].origin.y = origin.y;
+      db.save().catch(() => {});
+      // TODO: Use the P2P channel to broadcast this action
       this.broadcast({
         event: {
           type: 'ROOM/MOVE_PHOTO',
@@ -171,11 +172,11 @@ class Room {
   }
 
   onRemovePhoto(peer, { photo }) {
-    const { meta } = this;
-    const index = meta.photos.findIndex(({ _id }) => (_id.equals(photo)));
+    const { db } = this;
+    const index = db.photos.findIndex(({ _id }) => (_id.equals(photo)));
     if (~index) {
-      meta.photos.splice(index, 1);
-      meta.save();
+      db.photos.splice(index, 1);
+      db.save().catch(() => {});
       this.broadcast({
         event: {
           type: 'ROOM/REMOVE_PHOTO',
