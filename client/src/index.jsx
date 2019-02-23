@@ -27,7 +27,9 @@ if (store.getState().session.isAuth) {
   store.dispatch(refreshToken());
 }
 
-const history = createHashHistory();
+const history = createHashHistory({
+  basename: __BASENAME__,
+});
 const mount = document.getElementById('mount');
 render(
   <Provider store={store}>
