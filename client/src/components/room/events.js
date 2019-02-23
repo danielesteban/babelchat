@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { hideLoading, showLoading } from 'react-redux-loading-bar';
+import { withRouter } from 'react-router';
 import WebSocket from 'reconnecting-websocket';
 import Peer from 'simple-peer';
 import {
@@ -27,24 +28,12 @@ class Events extends Component {
 
   componentWillMount() {
     const {
-      slug,
-      hideLoading,
-      showLoading,
+      match: { params: { slug } },
       startStream,
     } = this.props;
 
     // Connect to room server
-    showLoading();
-    this.socket = new WebSocket(
-      `${API.baseURL.replace(/http/, 'ws')}room/${slug}`,
-      API.token
-    );
-    this.socket.onopen = () => {
-      this.socket.onclose = null;
-      this.socket.onerror = null;
-      hideLoading();
-    };
-    this.socket.onmessage = this.onMessage;
+    this.connectToServer(slug);
 
     // Open audio+video stream
     navigator.mediaDevices.getUserMedia({
@@ -67,6 +56,17 @@ class Events extends Component {
       });
   }
 
+  componentWillReceiveProps({ match: { params: { slug } } }) {
+    const {
+      match: { params: { slug: currentSlug } },
+      reset,
+    } = this.props;
+    if (currentSlug !== slug) {
+      reset();
+      this.connectToServer(slug);
+    }
+  }
+
   shouldComponentUpdate() {
     return false;
   }
@@ -85,6 +85,7 @@ class Events extends Component {
     const { socket } = this;
     const {
       addPhoto,
+      history,
       join,
       movePhoto,
       peerJoin,
@@ -124,9 +125,37 @@ class Events extends Component {
       case types.ROOM_PEER_SIGNAL:
         peerSignal(event.payload);
         break;
+      case types.ROOM_ERROR:
+      case types.ROOM_NOT_FOUND:
+        history.replace('/404');
+        break;
       default:
         break;
     }
+  }
+
+  connectToServer(room) {
+    const {
+      hideLoading,
+      showLoading,
+    } = this.props;
+    if (this.socket) {
+      if (this.socket.readyState === WebSocket.CONNECTING) {
+        hideLoading();
+      }
+      this.socket.close(1000);
+    }
+    showLoading();
+    this.socket = new WebSocket(
+      `${API.baseURL.replace(/http/, 'ws')}room/${room}`,
+      API.token
+    );
+    this.socket.onopen = () => {
+      this.socket.onclose = null;
+      this.socket.onerror = null;
+      hideLoading();
+    };
+    this.socket.onmessage = this.onMessage;
   }
 
   connectToPeer(peer, initiator = false) {
@@ -157,7 +186,14 @@ class Events extends Component {
 }
 
 Events.propTypes = {
-  slug: PropTypes.string.isRequired,
+  /* eslint-disable react/forbid-prop-types */
+  history: PropTypes.object.isRequired,
+  /* eslint-enable react/forbid-prop-types */
+  match: PropTypes.shape({
+    params: PropTypes.shape({
+      slug: PropTypes.string.isRequired,
+    }).isRequired,
+  }).isRequired,
   stream: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]).isRequired,
   addPhoto: PropTypes.func.isRequired,
   hideLoading: PropTypes.func.isRequired,
@@ -173,7 +209,7 @@ Events.propTypes = {
   startStream: PropTypes.func.isRequired,
 };
 
-export default connect(
+export default withRouter(connect(
   ({ room: { stream } }) => ({ stream }),
   {
     addPhoto,
@@ -189,4 +225,4 @@ export default connect(
     showLoading,
     startStream,
   }
-)(Events);
+)(Events));
