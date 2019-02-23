@@ -52,6 +52,7 @@ module.exports = {
   resolve: {
     alias: {
       '@': srcPath,
+      ...(mode !== 'production' ? { 'react-dom': '@hot-loader/react-dom' } : {}),
     },
     extensions: ['.js', '.jsx', '.json'],
   },
@@ -72,6 +73,7 @@ module.exports = {
         test: /\.(js|jsx)$/,
         loader: 'babel-loader',
         options: {
+          cacheDirectory: true,
           presets: [
             ['@babel/preset-env', { modules: false }],
             ['@babel/preset-react'],
@@ -87,6 +89,7 @@ module.exports = {
         test: /\.js$/,
         loader: 'babel-loader',
         options: {
+          cacheDirectory: true,
           presets: [
             ['@babel/preset-env', { modules: false }],
           ],

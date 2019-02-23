@@ -109,13 +109,13 @@ class Room {
 
   onAddPhoto({ user: { _id: creator } }, { origin, photo: buffer }) {
     const { meta } = this;
-    const target = 512;
     const image = sharp(Buffer.from(buffer, 'base64'));
     image
       .rotate()
       .metadata()
-      .then(({ width, height }) => (
-        image
+      .then(({ width, height }) => {
+        const target = Math.min(width > height ? width : height, 512);
+        return image
           .resize(width > height ? ({
             width: target,
           }) : ({
@@ -136,8 +136,8 @@ class Room {
               photo,
             });
             return meta.save();
-          })
-      ))
+          });
+      })
       .then(({ photos }) => {
         const { _id, origin, photo } = photos[photos.length - 1];
         this.broadcast({
