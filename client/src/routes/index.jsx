@@ -38,10 +38,11 @@ const Route = connect(
 const Root = () => (
   <Layout>
     <Switch>
-      <Redirect exact from="/" to="/rooms" />
-      <Route exact path="/(r|room)/:slug" component={Room} requiresAuth />
-      <Route exact path="/rooms" component={Rooms} requiresAuth />
+      <Route exact path="/404" component={NotFound} />
       <Route exact path="/login" component={Login} requiresNoAuth />
+      <Route exact path="/rooms" component={Rooms} requiresAuth />
+      <Route exact path="/:slug" component={Room} requiresAuth />
+      <Redirect exact from="/" to="/rooms" />
       <Route path="*" component={NotFound} />
     </Switch>
   </Layout>

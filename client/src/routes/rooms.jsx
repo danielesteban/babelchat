@@ -50,7 +50,7 @@ class Rooms extends PureComponent {
         {list.map(({ name, peers, slug }) => (
           <Link
             key={slug}
-            to={{ pathname: `r/${slug}` }}
+            to={{ pathname: `/${slug}` }}
           >
             <strong>
               {name}
