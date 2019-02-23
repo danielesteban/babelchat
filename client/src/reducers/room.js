@@ -41,6 +41,18 @@ const peers = (
           return false;
         }
       );
+    case types.ROOM_PEER_POINTER:
+      return state.map(
+        (peer) => {
+          if (peer.peer === action.payload.peer) {
+            return {
+              ...peer,
+              pointer: action.payload.pointer,
+            };
+          }
+          return peer;
+        }
+      );
     case types.ROOM_PEER_SIGNAL:
       state.forEach(({ connection, peer }) => {
         if (peer === action.payload.peer) {

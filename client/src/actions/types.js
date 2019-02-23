@@ -8,6 +8,7 @@ export const ROOM_JOIN = 'ROOM/JOIN';
 export const ROOM_NOT_FOUND = 'ROOM/NOT_FOUND';
 export const ROOM_PEER_JOIN = 'ROOM/PEER_JOIN';
 export const ROOM_PEER_LEAVE = 'ROOM/PEER_LEAVE';
+export const ROOM_PEER_POINTER = 'ROOM/PEER_POINTER';
 export const ROOM_PEER_SIGNAL = 'ROOM/PEER_SIGNAL';
 export const ROOM_PEER_STREAM = 'ROOM/PEER_STREAM';
 export const ROOM_MOVE_PHOTO = 'ROOM/MOVE_PHOTO';

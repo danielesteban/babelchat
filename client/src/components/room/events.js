@@ -13,6 +13,7 @@ import {
   reset,
   peerJoin,
   peerLeave,
+  peerPointer,
   peerSignal,
   peerStream,
   startStream,
@@ -160,7 +161,7 @@ class Events extends Component {
 
   connectToPeer(peer, initiator = false) {
     const { socket } = this;
-    const { stream, peerStream } = this.props;
+    const { stream, peerPointer, peerStream } = this.props;
     peer.connection = new Peer({
       initiator,
       stream,
@@ -174,6 +175,9 @@ class Events extends Component {
         },
       }));
     });
+    peer.connection.on('data', ({ buffer }) => (
+      peerPointer({ peer: peer.peer, pointer: [...(new Int32Array(buffer))] })
+    ));
     peer.connection.on('stream', stream => (
       peerStream({ peer: peer.peer, stream })
     ));
@@ -203,6 +207,7 @@ Events.propTypes = {
   reset: PropTypes.func.isRequired,
   peerJoin: PropTypes.func.isRequired,
   peerLeave: PropTypes.func.isRequired,
+  peerPointer: PropTypes.func.isRequired,
   peerSignal: PropTypes.func.isRequired,
   peerStream: PropTypes.func.isRequired,
   showLoading: PropTypes.func.isRequired,
@@ -220,6 +225,7 @@ export default withRouter(connect(
     reset,
     peerJoin,
     peerLeave,
+    peerPointer,
     peerSignal,
     peerStream,
     showLoading,

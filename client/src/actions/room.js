@@ -45,6 +45,13 @@ export function peerLeave({ peer }) {
   };
 }
 
+export function peerPointer({ peer, pointer }) {
+  return {
+    type: types.ROOM_PEER_POINTER,
+    payload: { peer, pointer },
+  };
+}
+
 export function peerSignal({ peer, signal }) {
   return {
     type: types.ROOM_PEER_SIGNAL,

@@ -4,6 +4,7 @@ import { I18n } from 'react-redux-i18n';
 import { connect } from 'react-redux';
 import Touches from 'touches';
 import { addWheelListener, removeWheelListener } from 'wheel';
+import API from '@/services/api';
 
 class Canvas extends Component {
   constructor(props) {
@@ -20,6 +21,7 @@ class Canvas extends Component {
     // We need to load the as Image objects in order to call ctx.drawImage
     // (and also to extract their width & height for intersection testing)
     // This is where we cache the loaded Image objects
+    this.peers = {};
     this.photos = {};
   }
 
@@ -168,6 +170,13 @@ class Canvas extends Component {
 
   onPointerMove(e, pointer) {
     const { dragging, origin, scale } = this;
+    const { peers } = this.props;
+    const { x, y } = this.getPointer(pointer);
+    peers.forEach(({ connection }) => {
+      if (!connection.destroyed) {
+        connection.send(new Int32Array([x, y]));
+      }
+    });
     if (!dragging) {
       return;
     }
@@ -180,7 +189,6 @@ class Canvas extends Component {
     if (dragging.photo) {
       // Translate the photo
       const { offset, photo } = dragging;
-      const { x, y } = this.getPointer(pointer);
       photo.origin.x = x + offset.x;
       photo.origin.y = y + offset.y;
     }
@@ -231,12 +239,25 @@ class Canvas extends Component {
     // Convert coordinates from screen-space to room-space
     const { dom: { current: canvas }, origin, scale } = this;
     return {
-      x: ((x - (canvas.width * 0.5)) / scale) - origin.x,
-      y: ((y - (canvas.height * 0.5)) / scale) - origin.y,
+      x: Math.round(((x - (canvas.width * 0.5)) / scale) - origin.x),
+      y: Math.round(((y - (canvas.height * 0.5)) / scale) - origin.y),
     };
   }
 
-  loadPhotos({ photos }) {
+  loadPhotos({ peers, photos }) {
+    // Go through all the peers in the redux state
+    peers.forEach(({ _id }) => {
+      // If it's not already in the cache, load it as an Image object
+      if (!this.peers[_id]) {
+        const img = new Image();
+        img.src = `${API.baseURL}user/${_id}/photo?auth=${API.token}`;
+        img.onload = () => (
+          // Redraw once it's loaded into the cache
+          this.draw()
+        );
+        this.peers[_id] = img;
+      }
+    });
     // Go through all the photos in the redux state
     photos.forEach(({ _id, photo }) => {
       // If it's not already in the cache, load it as an Image object
@@ -254,7 +275,7 @@ class Canvas extends Component {
 
   draw(props) {
     const { dom: { current: canvas }, origin, scale } = this;
-    const { name, photos } = props || this.props;
+    const { name, peers, photos } = props || this.props;
     const ctx = canvas.getContext('2d');
     // Reset canvas context
     canvas.width = canvas.width;
@@ -279,6 +300,29 @@ class Canvas extends Component {
         ctx.drawImage(this.photos[_id], origin.x, origin.y);
       }
     });
+    // Go through all the peers in the redux state
+    peers.forEach(({ _id, pointer }) => {
+      // Check the cache to see if the peer photo has been
+      // already loaded as an Image object by "loadPhotos"
+      // and if we have received a pointer position
+      if (this.peers[_id] && pointer) {
+        const [x, y] = pointer;
+        // Scale size with viewport
+        const radius = 24 / scale;
+        // Draw outer circle
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, 2 * Math.PI);
+        ctx.fill();
+        // Clipping mask circle
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(x, y, radius * 0.9, 0, 2 * Math.PI);
+        ctx.clip();
+        // Draw the cached Image object
+        ctx.drawImage(this.peers[_id], x - radius, y - radius, radius * 2, radius * 2);
+        ctx.restore();
+      }
+    });
   }
 
   render() {
@@ -292,6 +336,11 @@ class Canvas extends Component {
 Canvas.propTypes = {
   // eslint-disable-next-line react/no-unused-prop-types
   name: PropTypes.string.isRequired,
+  peers: PropTypes.arrayOf(PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    connection: PropTypes.object.isRequired,
+    pointer: PropTypes.arrayOf(PropTypes.number),
+  })).isRequired,
   photos: PropTypes.arrayOf(PropTypes.shape({
     origin: PropTypes.shape({
       x: PropTypes.number.isRequired,
@@ -303,5 +352,17 @@ Canvas.propTypes = {
 };
 
 export default connect(
-  ({ room: { name, photos, socket } }) => ({ name, photos, socket })
+  ({
+    room: {
+      name,
+      peers,
+      photos,
+      socket,
+    },
+  }) => ({
+    name,
+    peers,
+    photos,
+    socket,
+  })
 )(Canvas);
