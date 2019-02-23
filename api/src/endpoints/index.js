@@ -9,6 +9,34 @@ const {
 const preventCache = nocache();
 
 module.exports = (api) => {
+  /**
+   * @swagger
+   * /rooms:
+   *   get:
+   *     description: Get the rooms list
+   *     tags: [User]
+   *     responses:
+   *       200:
+   *         description: Rooms list
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: array
+   *               items:
+   *                 type: object
+   *                 properties:
+   *                   name:
+   *                     type: string
+   *                     description: Room name
+   *                   slug:
+   *                     type: string
+   *                     description: Room slug
+   *                   peers:
+   *                     type: number
+   *                     description: Room peer count
+   *       401:
+   *         description: Invalid/expired session token
+   */
   api.get(
     '/rooms',
     preventCache,
