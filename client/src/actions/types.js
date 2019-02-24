@@ -10,7 +10,6 @@ export const USER_TOGGLE_AUDIO = 'SESSION/TOGGLE_AUDIO';
 export const ROOM_ADD_PHOTO = 'ROOM/ADD_PHOTO';
 export const ROOM_ERROR = 'ROOM/ERROR';
 export const ROOM_JOIN = 'ROOM/JOIN';
-export const ROOM_NOT_FOUND = 'ROOM/NOT_FOUND';
 export const ROOM_PEER_JOIN = 'ROOM/PEER_JOIN';
 export const ROOM_PEER_LEAVE = 'ROOM/PEER_LEAVE';
 export const ROOM_PEER_POINTER = 'ROOM/PEER_POINTER';

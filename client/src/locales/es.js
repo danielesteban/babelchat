@@ -8,8 +8,7 @@ export default {
     welcome: 'Bienvenido a: "%{name}"',
   },
   Rooms: {
-    peers: '%{count} personas',
-    peers_1: '%{count} persona',
+    peers: '%{count}/%{limit} personas',
   },
   User: {
     signIn: 'Iniciar Sesión',

@@ -8,8 +8,7 @@ export default {
     welcome: 'Welcome to: "%{name}"',
   },
   Rooms: {
-    peers: '%{count} peers',
-    peers_1: '%{count} peer',
+    peers: '%{count}/%{limit} peers',
   },
   User: {
     audioInput: 'Audio input',

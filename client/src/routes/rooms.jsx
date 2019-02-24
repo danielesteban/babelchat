@@ -23,6 +23,10 @@ const Listing = styled.div`
     padding: 0.5rem 1rem;
     color: #000;
     text-decoration: none;
+    &.full {
+      opacity: 0.5;
+      pointer-events: none;
+    }
     > strong > img {
       width: 1.5rem;
       height: 1.125rem;
@@ -54,14 +58,16 @@ class Rooms extends PureComponent {
       <Listing>
         <h1>Rooms</h1>
         {list.map(({
-          name,
           flag,
+          name,
+          peerLimit,
           peers,
           slug,
         }) => (
           <Link
             key={slug}
             to={{ pathname: `/${slug}` }}
+            className={peers >= peerLimit ? 'full' : ''}
           >
             <strong>
               <img
@@ -71,6 +77,7 @@ class Rooms extends PureComponent {
             </strong>
             <Translate
               count={peers}
+              limit={peerLimit}
               value="Rooms.peers"
             />
           </Link>
@@ -82,8 +89,9 @@ class Rooms extends PureComponent {
 
 Rooms.propTypes = {
   list: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string.isRequired,
     flag: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    peerLimit: PropTypes.number.isRequired,
     peers: PropTypes.number.isRequired,
     slug: PropTypes.string.isRequired,
   })).isRequired,

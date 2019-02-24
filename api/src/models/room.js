@@ -3,8 +3,9 @@ const URLSlugs = require('mongoose-url-slugs');
 const config = require('../config');
 
 const RoomSchema = new mongoose.Schema({
-  name: { type: String, required: true },
   flag: { type: String, required: true },
+  name: { type: String, required: true },
+  peerLimit: { type: Number, default: 16 },
   photos: [{
     creator: {
       type: mongoose.Schema.Types.ObjectId,
@@ -30,10 +31,11 @@ RoomSchema.statics = {
       }
       Promise.all(
         config.defaultRooms.map(({
-          name,
           flag,
+          name,
+          peerLimit,
         }) => {
-          const room = new Room({ name, flag });
+          const room = new Room({ flag, name, peerLimit });
           return room.save();
         })
       );

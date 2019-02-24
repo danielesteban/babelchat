@@ -131,8 +131,9 @@ class Events extends Component {
         peerSignal(event.payload);
         break;
       case types.ROOM_ERROR:
-      case types.ROOM_NOT_FOUND:
-        history.replace('/404');
+        history.replace(
+          event.payload === 'FULL_ROOM' ? '/rooms' : '/404'
+        );
         break;
       default:
         break;
