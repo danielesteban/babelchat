@@ -58,6 +58,7 @@ class Room {
       type: 'ROOM/JOIN',
       payload: {
         name: db.name,
+        flag: db.flag,
         peers: peers
           .reduce((peers, { id, user }) => {
             if (!user._id.equals(_id)) {

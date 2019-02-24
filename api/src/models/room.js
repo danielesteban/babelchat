@@ -4,6 +4,7 @@ const config = require('../config');
 
 const RoomSchema = new mongoose.Schema({
   name: { type: String, required: true },
+  flag: { type: String, required: true },
   photos: [{
     creator: {
       type: mongoose.Schema.Types.ObjectId,
@@ -30,8 +31,9 @@ RoomSchema.statics = {
       Promise.all(
         config.defaultRooms.map(({
           name,
+          flag,
         }) => {
-          const room = new Room({ name });
+          const room = new Room({ name, flag });
           return room.save();
         })
       );

@@ -4,7 +4,7 @@ const Rooms = require('../services/rooms');
 module.exports.list = (req, res, next) => {
   Room
     .find()
-    .select('-_id name slug')
+    .select('-_id name flag slug')
     .then(rooms => res.json(
       rooms.map(({ _doc }) => {
         const room = Rooms(_doc.slug);

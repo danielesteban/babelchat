@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
+import ReactCountryFlag from 'react-country-flag';
 import { connect } from 'react-redux';
 import { Translate } from 'react-redux-i18n';
 import { Link } from 'react-router-dom';
@@ -23,6 +24,9 @@ const Listing = styled.div`
     padding: 0.5rem 1rem;
     color: #000;
     text-decoration: none;
+    > strong > span {
+      margin-right: 1rem;
+    }
     &:hover {
       background: #bbb;
     }
@@ -47,12 +51,18 @@ class Rooms extends PureComponent {
     return (
       <Listing>
         <h1>Rooms</h1>
-        {list.map(({ name, peers, slug }) => (
+        {list.map(({
+          name,
+          flag,
+          peers,
+          slug,
+        }) => (
           <Link
             key={slug}
             to={{ pathname: `/${slug}` }}
           >
             <strong>
+              <ReactCountryFlag code={flag} svg />
               {name}
             </strong>
             <Translate
@@ -69,6 +79,7 @@ class Rooms extends PureComponent {
 Rooms.propTypes = {
   list: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string.isRequired,
+    flag: PropTypes.string.isRequired,
     peers: PropTypes.number.isRequired,
     slug: PropTypes.string.isRequired,
   })).isRequired,

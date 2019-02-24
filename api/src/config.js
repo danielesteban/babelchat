@@ -22,12 +22,12 @@ if (
 
 module.exports = {
   defaultRooms: [
-    { name: 'English 101' },
-    { name: 'English intermediate' },
-    { name: 'English advanced' },
-    { name: 'Spanish 101' },
-    { name: 'Spanish intermediate' },
-    { name: 'Spanish advanced' },
+    { name: 'English 101', flag: 'gb' },
+    { name: 'English intermediate', flag: 'gb' },
+    { name: 'English advanced', flag: 'gb' },
+    { name: 'Spanish 101', flag: 'es' },
+    { name: 'Spanish intermediate', flag: 'es' },
+    { name: 'Spanish advanced', flag: 'es' },
   ],
   googleAuth: {
     clientID: process.env.GOOGLE_CLIENT_ID,

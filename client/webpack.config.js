@@ -16,6 +16,7 @@ const outputPath = path.resolve(__dirname, 'dist');
 const mode = process.env.NODE_ENV === 'production' ? 'production' : 'development';
 const api = process.env.API || (mode === 'production' ? 'https://api.babelchat.tk/' : 'http://localhost:8081/');
 const basename = process.env.BASENAME || '/';
+const countryFlagsCDN = 'https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.1/flags/4x3/';
 const domain = process.env.DOMAIN || 'babelchat.tk';
 
 let version;
@@ -171,7 +172,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       csp: (
         `default-src 'self' ws: wss: ${api} 'unsafe-eval';`
-        + `img-src 'self' blob: data: ${api};`
+        + `img-src 'self' blob: data: ${api} ${countryFlagsCDN};`
         + "style-src 'self' 'unsafe-inline';"
       ),
       minify: { collapseWhitespace: true },
