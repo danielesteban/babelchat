@@ -18,11 +18,15 @@ const Wrapper = styled.div`
   top: 0;
   right: 0;
   background: #000;
-  width: 100px;
-  height: 100px;
-  vertical-align: middle;
   box-shadow: 0 0 10px rgba(0, 0, 0, .5);
   overflow: hidden;
+  &, > img, > div > video {
+    width: 100px;
+    height: 100px;
+  }
+  > img {
+    vertical-align: middle;
+  }
   .actions {
     display: flex;
     position: absolute;
