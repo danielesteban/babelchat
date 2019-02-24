@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import ReactCountryFlag from 'react-country-flag';
 import { connect } from 'react-redux';
 import { Translate } from 'react-redux-i18n';
 import { Link } from 'react-router-dom';
@@ -24,8 +23,11 @@ const Listing = styled.div`
     padding: 0.5rem 1rem;
     color: #000;
     text-decoration: none;
-    > strong > span {
+    > strong > img {
+      width: 1.5rem;
+      height: 1.125rem;
       margin-right: 1rem;
+      vertical-align: middle;
     }
     &:hover {
       background: #bbb;
@@ -62,7 +64,9 @@ class Rooms extends PureComponent {
             to={{ pathname: `/${slug}` }}
           >
             <strong>
-              <ReactCountryFlag code={flag} svg />
+              <img
+                src={`${__COUNTRY_FLAGS_CDN__}${flag}.svg`}
+              />
               {name}
             </strong>
             <Translate
