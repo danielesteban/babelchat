@@ -13,6 +13,5 @@ export default {
   },
   User: {
     signIn: 'Iniciar Sesión',
-    signOut: 'Cerrar Sesión',
   },
 };

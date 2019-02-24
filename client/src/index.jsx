@@ -7,7 +7,7 @@ import { Provider } from 'react-redux';
 import { loadingBarMiddleware } from 'react-redux-loading-bar';
 import { Router } from 'react-router-dom';
 import thunkMiddleware from 'redux-thunk';
-import { refresh as refreshToken } from '@/actions/session';
+import { refreshSession } from '@/actions/user';
 import syncTranslationWithStore, { load as reloadLocales } from '@/locales';
 import rootReducer from '@/reducers';
 import Root from '@/routes';
@@ -23,8 +23,8 @@ const store = createStore(
 );
 syncTranslationWithStore(store);
 
-if (store.getState().session.isAuth) {
-  store.dispatch(refreshToken());
+if (store.getState().user.isAuth) {
+  store.dispatch(refreshSession());
 }
 
 const history = createHashHistory({

@@ -17,11 +17,13 @@ class Canvas extends Component {
     this.origin = { x: 0, y: 0 };
     // This is what controls the viewport scaling
     this.scale = 1;
-    // The photos in the state are stored as a base64 string
+    // The peer photos need to be downloaded from the API
+    // This is where we cache the loaded Image objects
+    this.peers = {};
+    // The photos are stored in the state as a base64 string
     // We need to load the as Image objects in order to call ctx.drawImage
     // (and also to extract their width & height for intersection testing)
     // This is where we cache the loaded Image objects
-    this.peers = {};
     this.photos = {};
   }
 
@@ -173,7 +175,10 @@ class Canvas extends Component {
     const { peers } = this.props;
     const { x, y } = this.getPointer(pointer);
     peers.forEach(({ connection }) => {
-      if (!connection.destroyed) {
+      if (
+        connection._channel
+        && connection._channel.readyState === 'open'
+      ) {
         connection.send(new Int32Array([x, y]));
       }
     });

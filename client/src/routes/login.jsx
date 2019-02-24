@@ -4,7 +4,7 @@ import { TiSocialGooglePlus } from 'react-icons/ti';
 import { connect } from 'react-redux';
 import { Translate } from 'react-redux-i18n';
 import styled from 'styled-components';
-import { refresh } from '@/actions/session';
+import { refreshSession } from '@/actions/user';
 import Button from '@/components/ui/button';
 import API from '@/services/api';
 
@@ -59,12 +59,12 @@ class Login extends PureComponent {
 
   onMessage({ origin, data: { session } }) {
     const { popupWatcher } = this;
-    const { refresh } = this.props;
+    const { refreshSession } = this.props;
     if (API.baseURL.indexOf(origin) === 0) {
       clearInterval(popupWatcher);
       delete this.popupWatcher;
       if (session) {
-        refresh(session);
+        refreshSession(session);
       }
     }
   }
@@ -110,12 +110,12 @@ class Login extends PureComponent {
 }
 
 Login.propTypes = {
-  refresh: PropTypes.func.isRequired,
+  refreshSession: PropTypes.func.isRequired,
 };
 
 export default connect(
   () => ({}),
   {
-    refresh,
+    refreshSession,
   }
 )(Login);

@@ -78,10 +78,3 @@ export function reset() {
     type: types.ROOM_RESET,
   };
 }
-
-export function startStream(stream) {
-  return {
-    type: types.ROOM_STREAM_START,
-    payload: { stream },
-  };
-}

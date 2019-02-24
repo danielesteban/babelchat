@@ -12,7 +12,10 @@ export default {
     peers_1: '%{count} peer',
   },
   User: {
+    audioInput: 'Audio input',
+    settings: 'Settings',
+    saveSettings: 'Save settings',
     signIn: 'Sign-In',
-    signOut: 'Sign-Out',
+    videoInput: 'Video input',
   },
 };

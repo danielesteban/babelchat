@@ -16,8 +16,8 @@ import {
   peerPointer,
   peerSignal,
   peerStream,
-  startStream,
 } from '@/actions/room';
+import { startStream } from '@/actions/user';
 import * as types from '@/actions/types';
 import API from '@/services/api';
 
@@ -30,6 +30,10 @@ class Events extends Component {
   componentWillMount() {
     const {
       match: { params: { slug } },
+      settings: {
+        audioInput,
+        videoInput,
+      },
       startStream,
     } = this.props;
 
@@ -38,11 +42,11 @@ class Events extends Component {
 
     // Open audio+video stream
     navigator.mediaDevices.getUserMedia({
-      audio: true,
+      audio: audioInput ? { deviceId: { exact: audioInput } } : true,
       video: {
-        facingMode: 'user',
         width: 640,
         height: 640,
+        ...(videoInput ? { deviceId: { exact: videoInput } } : { facingMode: 'user' }),
       },
     })
       .then(startStream)
@@ -198,6 +202,10 @@ Events.propTypes = {
       slug: PropTypes.string.isRequired,
     }).isRequired,
   }).isRequired,
+  settings: PropTypes.shape({
+    audioInput: PropTypes.string.isRequired,
+    videoInput: PropTypes.string.isRequired,
+  }).isRequired,
   stream: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]).isRequired,
   addPhoto: PropTypes.func.isRequired,
   hideLoading: PropTypes.func.isRequired,
@@ -215,7 +223,7 @@ Events.propTypes = {
 };
 
 export default withRouter(connect(
-  ({ room: { stream } }) => ({ stream }),
+  ({ user: { settings, stream } }) => ({ settings, stream }),
   {
     addPhoto,
     hideLoading,

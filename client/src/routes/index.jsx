@@ -9,7 +9,7 @@ import Login from './login';
 import NotFound from './404';
 
 const Route = connect(
-  ({ session: { isAuth } }) => ({ isAuth })
+  ({ user: { isAuth } }) => ({ isAuth })
 )(({
   component: Component,
   isAuth,

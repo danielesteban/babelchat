@@ -40,14 +40,13 @@ class Room {
 
   onOpen(peer) {
     const { db, peers } = this;
-    const { _id, name } = peer.user;
+    const { _id } = peer.user;
     peer.id = uuid();
     this.broadcast({
       event: {
         type: 'ROOM/PEER_JOIN',
         payload: {
           _id,
-          name,
           peer: peer.id,
         },
       },
@@ -64,7 +63,6 @@ class Room {
             if (!user._id.equals(_id)) {
               peers.push({
                 _id: user._id,
-                name: user.name,
                 peer: id,
               });
             }

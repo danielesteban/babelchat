@@ -23,7 +23,6 @@ const Peers = ({ peers }) => (
   <Listing>
     {peers.map(({
       _id,
-      name,
       peer,
       video,
     }) => (
@@ -35,7 +34,6 @@ const Peers = ({ peers }) => (
       ) : (
         <img
           key={peer}
-          alt={name}
           src={`${API.baseURL}user/${_id}/photo?auth=${API.token}`}
         />
       )
@@ -45,7 +43,7 @@ const Peers = ({ peers }) => (
 
 Peers.propTypes = {
   peers: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string.isRequired,
+    _id: PropTypes.string.isRequired,
     peer: PropTypes.string.isRequired,
     video: PropTypes.object,
   })).isRequired,

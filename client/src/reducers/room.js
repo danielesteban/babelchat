@@ -78,7 +78,7 @@ const peers = (
           return peer;
         }
       );
-    case types.ROOM_STREAM_START:
+    case types.USER_START_STREAM:
       state.forEach(({ connection }) => {
         connection.addStream(action.payload.stream);
       });
@@ -141,55 +141,11 @@ const socket = (
   }
 };
 
-const stream = (
-  state = false,
-  action
-) => {
-  switch (action.type) {
-    case types.ROOM_STREAM_START:
-      return action.payload.stream;
-    case types.ROOM_RESET:
-      if (state) {
-        state.getTracks().forEach(track => track.stop());
-      }
-      return false;
-    default:
-      return state;
-  }
-};
-
-const video = (
-  state = false,
-  action
-) => {
-  switch (action.type) {
-    case types.ROOM_STREAM_START: {
-      const video = document.createElement('video');
-      video.muted = true;
-      video.srcObject = action.payload.stream;
-      video.onloadedmetadata = () => (
-        WaitForFirstInteraction()
-          .then(() => video.play())
-      );
-      return video;
-    }
-    case types.ROOM_RESET:
-      if (state) {
-        state.srcObject = null;
-      }
-      return false;
-    default:
-      return state;
-  }
-};
-
 const roomReducer = combineReducers({
   name,
   peers,
   photos,
   socket,
-  stream,
-  video,
 });
 
 export default roomReducer;

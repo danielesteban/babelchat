@@ -42,16 +42,9 @@ UserSchema.pre('save', function onSave(next) {
 
 UserSchema.methods = {
   getNewSession() {
-    const {
-      _id,
-      name,
-      email,
-    } = this;
     return {
       profile: {
-        _id,
-        name,
-        email,
+        _id: this._id,
       },
       token: this.issueToken(),
     };
