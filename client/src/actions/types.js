@@ -16,6 +16,7 @@ export const ORG_SHOW_SIGNUP = 'ORG/SHOW_SIGNUP';
 export const ORG_HIDE_SIGNUP = 'ORG/HIDE_SIGNUP';
 export const ORG_SIGNUP = 'ORG/SIGNUP';
 export const ORG_SIGNUP_FULFILLED = 'ORG/SIGNUP_FULFILLED';
+export const ORG_UPDATE_IMAGE = 'ORG/UPDATE_IMAGE';
 export const ROOM_ADD_PHOTO = 'ROOM/ADD_PHOTO';
 export const ROOM_ERROR = 'ROOM/ERROR';
 export const ROOM_JOIN = 'ROOM/JOIN';

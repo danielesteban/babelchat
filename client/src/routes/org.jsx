@@ -1,10 +1,14 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import { TiPlus } from 'react-icons/ti';
+import { TiPlus, TiUpload } from 'react-icons/ti';
 import { connect } from 'react-redux';
 import { Translate } from 'react-redux-i18n';
 import styled from 'styled-components';
-import { fetch, reset } from '@/actions/org';
+import {
+  fetch,
+  reset,
+  updateImage,
+} from '@/actions/org';
 import Rooms from '@/components/org/rooms';
 import Button from '@/components/ui/button';
 import Login from '@/components/ui/login';
@@ -17,6 +21,22 @@ const Wrapper = styled.div`
   margin: 0 auto;
 `;
 
+const uploadButton = `
+  > button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.25rem;
+    display: flex;
+    font-size: 1.5em;
+    opacity: 0;
+    transition: opacity ease-out .2s;
+  }
+  &:hover > button {
+    opacity: 1;    
+  }
+`;
+
 const Heading = styled.div`
   box-sizing: border-box;
   background: #eee;
@@ -27,6 +47,7 @@ const Heading = styled.div`
   height: 250px;
   border-bottom: 1px solid #aaa;
   position: relative;
+  ${uploadButton}
 `;
 
 const Info = styled.div`
@@ -35,10 +56,10 @@ const Info = styled.div`
   align-items: flex-end;
   left: 0;
   bottom: 0;
-  > div {
-    font-size: 2.5em;
-    padding: 1rem;
-  }
+`;
+
+const Logo = styled.div`
+  position: relative;
   > img {
     width: 100px;
     height: 100px;
@@ -48,7 +69,14 @@ const Info = styled.div`
     border: 1px solid #aaa;
     border-bottom: 0;
     border-left: 0;
+    vertical-align: middle;
   }
+  ${uploadButton}
+`;
+
+const Name = styled.div`
+  font-size: 2.5em;
+  padding: 1rem;
 `;
 
 const Actions = styled.div`
@@ -94,6 +122,25 @@ class Org extends PureComponent {
       ));
   }
 
+  updateImage(image) {
+    const {
+      updateImage,
+    } = this.props;
+    const input = document.createElement('input');
+    input.accept = 'image/*';
+    input.type = 'file';
+    input.onchange = () => {
+      const [file] = input.files;
+      if (file) {
+        updateImage({ image, blob: file })
+          .then(() => (
+            window.location.reload()
+          ));
+      }
+    };
+    input.click();
+  }
+
   render() {
     const {
       hasLoaded,
@@ -112,18 +159,40 @@ class Org extends PureComponent {
       <Wrapper>
         <Heading cover={`${API.baseURL}org/${id}/cover`}>
           <Info>
-            <img src={`${API.baseURL}org/${id}/logo`} />
-            <div>{ name }</div>
+            <Logo>
+              <img src={`${API.baseURL}org/${id}/logo`} />
+              {isAdmin ? (
+                <Button
+                  type="button"
+                  onClick={() => this.updateImage('logo')}
+                >
+                  <TiUpload />
+                </Button>
+              ) : null}
+            </Logo>
+            <Name>
+              { name }
+            </Name>
           </Info>
           <Actions>
             {isAdmin ? (
-              <Button type="button">
+              <Button
+                type="button"
+              >
                 <TiPlus />
                 <Translate value="Org.createRoom" />
               </Button>
             ) : null}
             {!isAuth ? <Login /> : null}
           </Actions>
+          {isAdmin ? (
+            <Button
+              type="button"
+              onClick={() => this.updateImage('cover')}
+            >
+              <TiUpload />
+            </Button>
+          ) : null}
         </Heading>
         {isUser && isActive ? <Rooms org={slug} /> : null}
         {isUser && !isActive ? (
@@ -159,6 +228,7 @@ Org.propTypes = {
   name: PropTypes.string.isRequired,
   fetch: PropTypes.func.isRequired,
   reset: PropTypes.func.isRequired,
+  updateImage: PropTypes.func.isRequired,
 };
 
 export default connect(
@@ -186,5 +256,6 @@ export default connect(
   {
     fetch,
     reset,
+    updateImage,
   }
 )(Org);

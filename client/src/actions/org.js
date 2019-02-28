@@ -52,3 +52,19 @@ export function showSignup() {
     type: types.ORG_SHOW_SIGNUP,
   };
 }
+
+export function updateImage({ image, blob }) {
+  return (dispatch, getState) => {
+    const { org: { id } } = getState();
+    const body = new FormData();
+    body.append('image', blob);
+    return dispatch({
+      type: types.ORG_UPDATE_IMAGE,
+      payload: API.fetch({
+        body,
+        endpoint: `org/${id}/${image}`,
+        method: 'PUT',
+      }),
+    });
+  };
+}

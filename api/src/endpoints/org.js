@@ -1,4 +1,4 @@
-const { notFound } = require('boom');
+const { badData, notFound, unauthorized } = require('boom');
 const { body, param } = require('express-validator/check');
 const config = require('../config');
 const { Org, OrgUser, Room } = require('../models');
@@ -131,6 +131,50 @@ module.exports.getImage = [
               .send(buffer)
           ));
       })
+      .catch(next);
+  },
+];
+
+module.exports.updateImage = [
+  param('id')
+    .isMongoId(),
+  param('image')
+    .isIn(['cover', 'logo']),
+  checkValidationResult,
+  (req, res, next) => {
+    const { id, image } = req.params;
+    if (
+      !req.file
+      || !req.file.buffer
+      || req.file.mimetype.indexOf('image/') !== 0
+    ) {
+      throw badData();
+    }
+    return OrgUser
+      .findOne({
+        admin: true,
+        active: true,
+        user: req.user._id,
+        org: id,
+      })
+      .then((isOrgUser) => {
+        if (!isOrgUser) {
+          throw unauthorized();
+        }
+        return Org
+          .findById(id)
+          .then((org) => {
+            if (!org) {
+              throw notFound();
+            }
+            org[image] = req.file.buffer;
+            return org
+              .save();
+          });
+      })
+      .then(() => (
+        res.status(200).end()
+      ))
       .catch(next);
   },
 ];

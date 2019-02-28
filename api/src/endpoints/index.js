@@ -1,3 +1,4 @@
+const multer = require('multer');
 const nocache = require('nocache');
 const org = require('./org');
 const room = require('./room');
@@ -9,6 +10,9 @@ const {
 } = require('../services/passport');
 
 const preventCache = nocache();
+const upload = multer({
+  storage: multer.memoryStorage(),
+});
 
 module.exports = (api) => {
   /**
@@ -96,6 +100,49 @@ module.exports = (api) => {
   api.get(
     '/org/:id/:image',
     org.getImage
+  );
+
+  /**
+   * @swagger
+   * /org/{id}/{image}:
+   *   put:
+   *     description: Update org image
+   *     tags: [Org]
+   *     parameters:
+   *       - name: id
+   *         in: path
+   *         description: Org id
+   *         required: true
+   *         schema:
+   *           type: string
+   *       - name: image
+   *         in: path
+   *         description: cover or logo
+   *         required: true
+   *         schema:
+   *           type: string
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         multipart/form-data:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               image:
+   *                 type: string
+   *                 format: binary
+   *     responses:
+   *       200:
+   *         description: Successfully updated
+   *       401:
+   *         description: Invalid/expired session token
+   */
+  api.put(
+    '/org/:id/:image',
+    preventCache,
+    requireAuth,
+    upload.single('image'),
+    org.updateImage
   );
 
   /**
