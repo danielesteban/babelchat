@@ -1,24 +1,45 @@
-const { Room } = require('../models');
+const { unauthorized } = require('boom');
+const { param } = require('express-validator/check');
+const { Org, OrgUser, Room } = require('../models');
 const Rooms = require('../services/rooms');
+const { checkValidationResult } = require('../services/errorHandler');
 
-module.exports.list = (req, res, next) => {
-  // Fetch the room list from the db
-  Room
-    .find()
-    .select('-_id flag name peerLimit slug')
-    .then(rooms => res.json(
-      rooms.map(({ _doc }) => {
-        const room = Rooms(_doc.slug);
-        return {
-          ..._doc,
-          // Append current peer count
-          // from the room service
-          peers: room ? room.peers.length : 0,
-        };
+module.exports.list = [
+  param('org')
+    .isMongoId(),
+  checkValidationResult,
+  (req, res, next) => {
+    const { org } = req.params;
+    // Access control
+    return OrgUser
+      .findOne({
+        active: true,
+        user: req.user._id,
+        org,
       })
-    ))
-    .catch(next);
-};
+      .then((isOrgUser) => {
+        if (!isOrgUser) {
+          throw unauthorized();
+        }
+        // Fetch the room list from the db
+        return Room
+          .find({ org })
+          .select('-_id flag name peerLimit slug')
+          .then(rooms => res.json(
+            rooms.map(({ _doc }) => {
+              const room = Rooms(`${org}::${_doc.slug}`);
+              return {
+                ..._doc,
+                // Append current peer count
+                // from the room service
+                peers: room ? room.peers.length : 0,
+              };
+            })
+          ));
+      })
+      .catch(next);
+  },
+];
 
 module.exports.join = (peer, req) => {
   // Monitor if the peer closes the connection
@@ -29,29 +50,53 @@ module.exports.join = (peer, req) => {
   };
   peer.once('close', onClose);
 
-  // Load the room
-  (new Promise((resolve) => {
-    // Check if the room is already loaded
-    const room = Rooms(req.params.slug);
-    if (room) {
-      resolve(room);
-      return;
-    }
-    // Room it's not loaded
-    // Fetch it from the db
-    resolve(
-      Room
-        .findOne({ slug: req.params.slug })
-        .then((room) => {
-          if (!room) {
-            // Room doesn't exists
-            throw new Error('NOT_FOUND');
-          }
-          // Load room
-          return Rooms(room);
+  const { org, slug } = req.params;
+  // Fetch org
+  Org
+    .findOne({ slug: org })
+    .select('_id')
+    .then((org) => {
+      if (!org) {
+        throw new Error('NOT_FOUND');
+      }
+      // Access control
+      return OrgUser
+        .findOne({
+          active: true,
+          user: peer.user._id,
+          org: org._id,
         })
-    );
-  }))
+        .then((isOrgUser) => {
+          if (!isOrgUser) {
+            throw new Error('UNAUTHORIZED');
+          }
+          // Load the room
+          return new Promise((resolve) => {
+            // Check if the room is already loaded
+            const roomKey = `${org._id}::${slug}`;
+            const room = Rooms(roomKey);
+            if (room) {
+              resolve(room);
+              return;
+            }
+            // Room it's not loaded
+            // Fetch it from the db
+            resolve(
+              Room
+                .findOne({ org: org._id, slug })
+                .then((room) => {
+                  if (!room) {
+                    // Room doesn't exists
+                    throw new Error('NOT_FOUND');
+                  }
+                  room.key = roomKey;
+                  // Load room
+                  return Rooms(room);
+                })
+            );
+          });
+        });
+    })
     .then((room) => {
       // Check if the room is already full
       if (room.peers.length >= room.db.peerLimit) {

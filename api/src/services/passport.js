@@ -4,7 +4,7 @@ const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const config = require('../config');
 const { User } = require('../models');
 
-module.exports.requireAuth = (req, res, next) => {
+const authenticate = (req, state, next) => {
   let token;
   if (req.headers.authorization) {
     const [type, value] = req.headers.authorization.split(' ');
@@ -17,41 +17,50 @@ module.exports.requireAuth = (req, res, next) => {
     token = req.query.auth;
   }
   if (!token) {
-    throw unauthorized();
-  }
-  User
-    .fromToken(token)
-    .then((user) => {
-      if (!user) {
-        throw unauthorized();
-      }
-      req.user = user;
-      next();
-    })
-    .catch(err => next(unauthorized(err)));
-};
-
-module.exports.requireSocketAuth = (ws, req, next) => {
-  let token;
-  if (req.headers['sec-websocket-protocol']) {
-    token = req.headers['sec-websocket-protocol'];
-  }
-  if (!token) {
-    ws.close();
+    next();
     return;
   }
   User
     .fromToken(token)
     .then((user) => {
-      if (!user) {
-        ws.close();
-        return;
+      if (user) {
+        state.user = user;
       }
-      ws.user = user;
       next();
     })
-    .catch(() => ws.close());
+    .catch(next);
 };
+
+module.exports.authenticate = (req, res, next) => (
+  authenticate(req, req, next)
+);
+
+module.exports.requireAuth = (req, res, next) => (
+  authenticate(req, req, (err) => {
+    if (err || !req.user) {
+      next(unauthorized(err));
+      return;
+    }
+    next();
+  })
+);
+
+module.exports.requirePeerAuth = (peer, req, next) => (
+  authenticate(req, peer, (err) => {
+    if (err || !peer.user) {
+      // Send back error to peer
+      peer.send(JSON.stringify({
+        type: 'ROOM/ERROR',
+        payload: 'UNAUTHORIZED',
+      }), () => (
+        // Close the connection
+        peer.close(1000)
+      ));
+      return;
+    }
+    next();
+  })
+);
 
 module.exports.setup = () => {
   // Setup GoogleStrategy

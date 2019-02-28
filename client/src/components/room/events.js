@@ -29,7 +29,7 @@ class Events extends Component {
 
   componentWillMount() {
     const {
-      match: { params: { slug } },
+      match: { params: { org, slug } },
       settings: {
         audioInput,
         videoInput,
@@ -38,7 +38,7 @@ class Events extends Component {
     } = this.props;
 
     // Connect to room server
-    this.connectToServer(slug);
+    this.connectToServer({ org, slug });
 
     // Open audio+video stream
     navigator.mediaDevices.getUserMedia({
@@ -61,14 +61,14 @@ class Events extends Component {
       });
   }
 
-  componentWillReceiveProps({ match: { params: { slug } } }) {
+  componentWillReceiveProps({ match: { params: { org, slug } } }) {
     const {
-      match: { params: { slug: currentSlug } },
+      match: { params: { org: currentOrg, slug: currentSlug } },
       reset,
     } = this.props;
-    if (currentSlug !== slug) {
+    if (currentOrg !== org || currentSlug !== slug) {
       reset();
-      this.connectToServer(slug);
+      this.connectToServer({ org, slug });
     }
   }
 
@@ -89,6 +89,7 @@ class Events extends Component {
   onMessage({ data }) {
     const { socket } = this;
     const {
+      match: { params: { org } },
       addPhoto,
       history,
       join,
@@ -132,7 +133,7 @@ class Events extends Component {
         break;
       case types.ROOM_ERROR:
         history.replace(
-          event.payload === 'FULL_ROOM' ? '/rooms' : '/404'
+          event.payload === 'FULL_ROOM' ? `/${org}` : '/404'
         );
         break;
       default:
@@ -140,7 +141,7 @@ class Events extends Component {
     }
   }
 
-  connectToServer(room) {
+  connectToServer({ org, slug }) {
     const {
       hideLoading,
       showLoading,
@@ -153,7 +154,7 @@ class Events extends Component {
     }
     showLoading();
     this.socket = new WebSocket(
-      `${API.baseURL.replace(/http/, 'ws')}room/${room}`,
+      `${API.baseURL.replace(/http/, 'ws')}room/${org}/${slug}`,
       API.token
     );
     this.socket.onopen = () => {
@@ -200,6 +201,7 @@ Events.propTypes = {
   /* eslint-enable react/forbid-prop-types */
   match: PropTypes.shape({
     params: PropTypes.shape({
+      org: PropTypes.string.isRequired,
       slug: PropTypes.string.isRequired,
     }).isRequired,
   }).isRequired,

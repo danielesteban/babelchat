@@ -4,14 +4,13 @@ import { connect } from 'react-redux';
 import { Translate } from 'react-redux-i18n';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { fetch } from '@/actions/rooms';
+import { fetchRooms as fetch } from '@/actions/org';
 
 const Listing = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 512px;
-  margin: 0 auto;
+  margin: 1rem auto;
   background: #fff;
   > a {
     display: flex;
@@ -37,13 +36,6 @@ const Listing = styled.div`
       background: #bbb;
     }
   }
-  > h1 {
-    box-sizing: border-box;
-    width: 100%;
-    margin: 0 0 1rem;
-    padding: 1rem;
-    border-bottom: 1px solid #aaa;
-  }
 `;
 
 class Rooms extends PureComponent {
@@ -53,10 +45,9 @@ class Rooms extends PureComponent {
   }
 
   render() {
-    const { list } = this.props;
+    const { list, org } = this.props;
     return (
       <Listing>
-        <h1>Rooms</h1>
         {list.map(({
           flag,
           name,
@@ -66,7 +57,7 @@ class Rooms extends PureComponent {
         }) => (
           <Link
             key={slug}
-            to={{ pathname: `/${slug}` }}
+            to={{ pathname: `/${org}/${slug}` }}
             className={peers >= peerLimit ? 'full' : ''}
           >
             <strong>
@@ -95,12 +86,15 @@ Rooms.propTypes = {
     peers: PropTypes.number.isRequired,
     slug: PropTypes.string.isRequired,
   })).isRequired,
+  org: PropTypes.string.isRequired,
   fetch: PropTypes.func.isRequired,
 };
 
 export default connect(
   ({
-    rooms: { list },
+    org: {
+      rooms: list,
+    },
   }) => ({
     list,
   }),

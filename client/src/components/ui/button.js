@@ -6,8 +6,8 @@ export default styled.button`
   justify-content: center;
   padding: 0.5rem 1rem;
   margin: 0;
-  background-color: ${props => (props.primary ? '#eee' : '#333')};
-  color: ${props => (props.primary ? '#333' : '#eee')};
+  background-color: ${props => (props.primary ? '#393' : '#111')};
+  color: #eee;
   border: 1px solid #151515;
   border-radius: 2px;
   outline: 0;
@@ -21,6 +21,6 @@ export default styled.button`
     margin-left: 0.5rem;
   }
   &:hover {
-    background-color: ${props => (props.primary ? '#fff' : '#555')};
+    background-color: ${props => (props.primary ? '#111' : '#393')};
   }
 `;

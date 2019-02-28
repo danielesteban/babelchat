@@ -10,6 +10,17 @@ export default {
   Rooms: {
     peers: '%{count}/%{limit} peers',
   },
+  Org: {
+    CTA: {
+      copy: 'Are you an academy manager/teacher?',
+      button: 'Try it now',
+    },
+    Signup: {
+      title: 'Create an account',
+      name: 'Organization name',
+      submit: 'Create account',
+    },
+  },
   User: {
     audioInput: 'Audio input',
     settings: 'Settings',
