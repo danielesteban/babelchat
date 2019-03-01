@@ -10,7 +10,6 @@ const Listing = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 1rem auto;
   background: #fff;
   > a {
     display: flex;
@@ -19,9 +18,14 @@ const Listing = styled.div`
     align-items: center;
     justify-content: space-between;
     font-size: 1.5em;
-    padding: 0.5rem 1rem;
+    padding: 1rem;
     color: #000;
     text-decoration: none;
+    transition: color ease-out .15s, background-color ease-out .15s;
+    will-change: color, background-color;
+    &:nth-child(odd) {
+      background: #eee;
+    }
     &.full {
       opacity: 0.5;
       pointer-events: none;
@@ -33,7 +37,8 @@ const Listing = styled.div`
       vertical-align: middle;
     }
     &:hover {
-      background: #bbb;
+      color: #eee;
+      background-color: #393;
     }
   }
 `;

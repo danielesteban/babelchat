@@ -25,7 +25,7 @@ const uploadButton = `
   > button {
     position: absolute;
     top: 0;
-    right: 0;
+    left: 0;
     padding: 0.25rem;
     display: flex;
     font-size: 1.5em;
@@ -75,8 +75,14 @@ const Logo = styled.div`
 `;
 
 const Name = styled.div`
-  font-size: 2.5em;
+  background: rgba(0, 0, 0, .75);
+  color: #eee;
   padding: 1rem;
+  border-radius: 0 4px 0 0;
+  border: 1px solid #aaa;
+  border-bottom: 0;
+  border-left: 0;
+  font-size: 2.5em;
 `;
 
 const Actions = styled.div`
@@ -86,7 +92,7 @@ const Actions = styled.div`
   right: 0rem;
   bottom: 0rem;
   padding: 0.5rem 1rem;
-  background: rgba(0, 0, 0, ${1 / 3});
+  background: rgba(0, 0, 0, .25);
   border-radius: 4px 0 0 0;
   border: 1px solid #aaa;
   border-bottom: 0;
@@ -94,7 +100,7 @@ const Actions = styled.div`
 `;
 
 class Org extends PureComponent {
-  componentDidMount() {
+  componentWillMount() {
     this.fetch();
   }
 

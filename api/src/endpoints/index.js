@@ -251,6 +251,25 @@ module.exports = (api) => {
     user.getPhoto
   );
 
+  /**
+   * @swagger
+   * /user/orgs:
+   *   get:
+   *     description: List user orgs
+   *     tags: [User]
+   *     responses:
+   *       200:
+   *         description: User orgs list
+   *       401:
+   *         description: Invalid/expired session token
+   */
+  api.get(
+    '/user/orgs',
+    preventCache,
+    requireAuth,
+    user.listOrgs
+  );
+
   // Google auth popup
   api.get(
     '/user/google',

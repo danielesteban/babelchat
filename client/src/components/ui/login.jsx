@@ -14,14 +14,10 @@ class Login extends PureComponent {
     this.onMessage = this.onMessage.bind(this);
   }
 
-  componentDidMount() {
-    window.addEventListener('message', this.onMessage, false);
-  }
-
   componentWillUnmount() {
     const { popupWatcher } = this;
-    window.removeEventListener('message', this.onMessage);
     if (popupWatcher) {
+      window.removeEventListener('message', this.onMessage);
       clearInterval(popupWatcher);
       delete this.popupWatcher;
     }
@@ -31,6 +27,7 @@ class Login extends PureComponent {
     const { popupWatcher } = this;
     const { onSession, refreshSession } = this.props;
     if (API.baseURL.indexOf(origin) === 0) {
+      window.removeEventListener('message', this.onMessage);
       clearInterval(popupWatcher);
       delete this.popupWatcher;
       if (session) {
@@ -54,6 +51,7 @@ class Login extends PureComponent {
     );
     if (this.popupWatcher) {
       clearInterval(this.popupWatcher);
+      window.removeEventListener('message', this.onMessage);
     }
     this.popupWatcher = setInterval(() => {
       if (!win.window) {
@@ -63,6 +61,7 @@ class Login extends PureComponent {
       }
       win.postMessage(true, API.baseURL);
     }, 100);
+    window.addEventListener('message', this.onMessage, false);
   }
 
   render() {

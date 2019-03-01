@@ -2,6 +2,15 @@ import { setLocale as reduxSetLocale } from 'react-redux-i18n';
 import * as types from './types';
 import API from '@/services/api';
 
+export function fetchOrgs() {
+  return {
+    type: types.USER_FETCH_ORGS,
+    payload: API.fetch({
+      endpoint: 'user/orgs',
+    }),
+  };
+}
+
 export function hideSettings() {
   return {
     type: types.USER_HIDE_SETTINGS,

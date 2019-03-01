@@ -16,10 +16,10 @@ const loadingBarStyle = {
 const Layout = ({ children }) => (
   <div>
     <LoadingBar style={loadingBarStyle} />
-    <User />
     <Route>
       { children }
     </Route>
+    <User />
   </div>
 );
 

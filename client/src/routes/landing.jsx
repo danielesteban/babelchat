@@ -3,12 +3,14 @@ import React, { PureComponent } from 'react';
 import { TiGroup, TiPlus } from 'react-icons/ti';
 import { connect } from 'react-redux';
 import { Translate } from 'react-redux-i18n';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import Button from '@/components/ui/button';
 import Login from '@/components/ui/login';
 import Dialog from '@/components/ui/dialog';
 import Form from '@/components/ui/form';
 import { showSignup, signup, hideSignup } from '@/actions/org';
+import { fetchOrgs } from '@/actions/user';
 
 const Scroll = styled.div`
   display: flex;
@@ -46,6 +48,65 @@ const Heading = styled.div`
   }
 `;
 
+const Columns = styled.div`
+  display: flex;
+  height: 100%;
+  > div, > ul {
+    &:nth-child(1) {
+      width: 60%;
+    }
+    &:nth-child(2) {
+      width: 40%;
+    }
+    > h3 {
+      font-size: 2em;
+      margin: 1.5rem 0;
+    }
+  }
+`;
+
+const Orgs = styled.div`
+  background: #eee;
+  > a {
+    display: flex;
+    box-sizing: border-box;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1.5em;
+    padding: 0.5rem 1.5rem;
+    color: #000;
+    text-decoration: none;
+    transition: color ease-out .15s, background-color ease-out .15s;
+    will-change: color, background-color;
+    &:nth-child(odd) {
+      background: #ddd;
+    }
+    &.full {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+    > strong > img {
+      width: 1.5rem;
+      height: 1.125rem;
+      margin-right: 1rem;
+      vertical-align: middle;
+    }
+    &:hover {
+      color: #eee;
+      background-color: #393;
+    }
+  }
+  > button {
+    margin: 0 auto;
+    width: 50%;
+    font-size: 1.5em;    
+    > svg {
+      font-size: 2em;
+    }
+  }
+`;
+
 const Features = styled.ul`
   margin: 2rem 1rem;
   text-align: left;
@@ -76,6 +137,13 @@ class Landing extends PureComponent {
     this.onSubmit = this.onSubmit.bind(this);
   }
 
+  componentWillMount() {
+    const { fetchOrgs, isAuth } = this.props;
+    if (isAuth) {
+      fetchOrgs();
+    }
+  }
+
   onSubmit(e) {
     const { hideSignup, history, signup } = this.props;
     const { target: form } = e;
@@ -97,6 +165,7 @@ class Landing extends PureComponent {
       hideSignup,
       isAuth,
       isSigningup,
+      orgs,
       showSignup,
     } = this.props;
     return (
@@ -106,29 +175,46 @@ class Landing extends PureComponent {
             <h2>BabelChat</h2>
             <p>Create your own language exchange service in seconds</p>
           </Heading>
-          <Features>
-            <li>
-              Group videochat rooms (up to 8 peers)
-            </li>
-            <li>
-              1 to 1 conversations with students
-            </li>
-            <li>
-              Customize it with your own branding
-            </li>
-            <li>
-              Another key feature
-            </li>
-            <li>
-              Yet another key feature
-            </li>
-            <li>
-              Some more key features
-            </li>
-            <li>
-              Another key feature
-            </li>
-          </Features>
+          <Columns>
+            <Features>
+              <li>
+                Group videochat rooms (up to 8 peers)
+              </li>
+              <li>
+                1 to 1 conversations with students
+              </li>
+              <li>
+                Customize it with your own branding
+              </li>
+              <li>
+                Integrate it on your website
+              </li>
+              <li>
+                Another key feature
+              </li>
+              <li>
+                Yet another key feature
+              </li>
+              <li>
+                Some more key features
+              </li>
+            </Features>
+            <Orgs>
+              <h3>Your orgs</h3>
+              {isAuth ? (
+                orgs.map(({ name, slug }) => (
+                  <Link
+                    key={slug}
+                    to={{ pathname: `/${slug}` }}
+                  >
+                    {name}
+                  </Link>
+                ))
+              ) : (
+                <Login />
+              )}
+            </Orgs>
+          </Columns>
           <CTA>
             <p>
               <Translate value="Org.CTA.copy" />
@@ -182,15 +268,25 @@ Landing.propTypes = {
   /* eslint-enable react/forbid-prop-types */
   isAuth: PropTypes.bool.isRequired,
   isSigningup: PropTypes.bool.isRequired,
+  orgs: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    slug: PropTypes.string.isRequired,
+  })).isRequired,
+  fetchOrgs: PropTypes.func.isRequired,
+  hideSignup: PropTypes.func.isRequired,
   showSignup: PropTypes.func.isRequired,
   signup: PropTypes.func.isRequired,
-  hideSignup: PropTypes.func.isRequired,
 };
 
 export default connect(
   ({
     org: { isSigningup },
-    user: { isAuth },
-  }) => ({ isAuth, isSigningup }),
-  { showSignup, signup, hideSignup }
+    user: { isAuth, orgs },
+  }) => ({ isAuth, isSigningup, orgs }),
+  {
+    fetchOrgs,
+    hideSignup,
+    showSignup,
+    signup,
+  }
 )(Landing);
