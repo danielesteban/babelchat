@@ -60,6 +60,8 @@ const orgs = (
   switch (action.type) {
     case types.USER_FETCH_ORGS_FULFILLED:
       return action.payload.sort(({ name: a }, { name: b }) => a.localeCompare(b));
+    case types.USER_SIGNOUT:
+      return [];
     default:
       return state;
   }

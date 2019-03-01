@@ -111,9 +111,9 @@ class Org extends PureComponent {
     this.fetch();
   }
 
-  componentWillReceiveProps({ isAuth }) {
-    const { isAuth: currentAuth } = this.props;
-    if (isAuth !== currentAuth) {
+  componentDidUpdate({ isAuth: wasAuth }) {
+    const { isAuth } = this.props;
+    if (wasAuth !== isAuth) {
       this.fetch();
     }
   }

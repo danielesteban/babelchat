@@ -145,6 +145,13 @@ class Landing extends PureComponent {
     }
   }
 
+  componentDidUpdate({ isAuth: wasAuth }) {
+    const { isAuth, fetchOrgs } = this.props;
+    if (!wasAuth && isAuth) {
+      fetchOrgs();
+    }
+  }
+
   onSubmit(e) {
     const { hideSignup, history, signup } = this.props;
     const { target: form } = e;
