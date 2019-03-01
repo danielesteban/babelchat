@@ -11,7 +11,7 @@ const Listing = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #fff;
+  background: #eee;
   > a {
     display: flex;
     box-sizing: border-box;
@@ -24,8 +24,8 @@ const Listing = styled.div`
     text-decoration: none;
     transition: color ease-out .15s, background-color ease-out .15s;
     will-change: color, background-color;
-    &:nth-child(odd) {
-      background: #eee;
+    &:nth-child(even) {
+      background: #ddd;
     }
     &.full {
       opacity: 0.5;

@@ -17,8 +17,8 @@ OrgSchema.pre('save', function onSave(next) {
     promises.push(
       sharp(org.cover)
         .rotate()
-        .resize(900, 250)
-        .jpeg({ quality: 85 })
+        .resize(900, 300)
+        .jpeg({ quality: 90 })
         .toBuffer()
         .then((cover) => {
           org.cover = cover;
@@ -29,8 +29,8 @@ OrgSchema.pre('save', function onSave(next) {
     promises.push(
       sharp(org.logo)
         .rotate()
-        .resize(100, 100)
-        .jpeg({ quality: 85 })
+        .resize(200, 200)
+        .jpeg({ quality: 90 })
         .toBuffer()
         .then((logo) => {
           org.logo = logo;

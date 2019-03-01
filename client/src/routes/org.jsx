@@ -27,14 +27,13 @@ const Wrapper = styled.div`
   width: 100%;
   max-width: 900px;
   margin: 0 auto;
-  text-align: center;
   box-shadow: 0 0 150px rgba(0, 0, 0, .15);
 `;
 
 const uploadButton = `
   > button {
     position: absolute;
-    top: 0;
+    bottom: 0;
     left: 0;
     padding: 0.25rem;
     display: flex;
@@ -47,66 +46,64 @@ const uploadButton = `
   }
 `;
 
-const Heading = styled.div`
+const Cover = styled.div`
   box-sizing: border-box;
   background: #eee;
   background-repeat: no-repeat;
   background-size: cover;
   background-image: url(${props => props.cover});
   width: 100%;
-  height: 250px;
+  height: 300px;
   border-bottom: 1px solid #aaa;
   position: relative;
   ${uploadButton}
 `;
 
-const Info = styled.div`
-  position: absolute;
+const Grid = styled.div`
   display: flex;
-  align-items: flex-end;
-  left: 0;
-  bottom: 0;
+  height: 100%;
+  > div, > ul {
+    &:nth-child(1) {
+      width: 200px;
+    }
+    &:nth-child(2) {
+      width: calc(100% - 200px);
+    }
+  }
+`;
+
+const Info = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const Logo = styled.div`
   position: relative;
   > img {
-    width: 100px;
-    height: 100px;
-    border-radius: 0 4px 0 0;
+    width: 200px;
+    height: 200px;
     background: #ccc;
     overflow: hidden;
-    border: 1px solid #aaa;
-    border-bottom: 0;
-    border-left: 0;
     vertical-align: middle;
   }
   ${uploadButton}
 `;
 
 const Name = styled.div`
-  background: rgba(0, 0, 0, .75);
-  color: #eee;
-  padding: 1rem;
-  border-radius: 0 4px 0 0;
-  border: 1px solid #aaa;
-  border-bottom: 0;
-  border-left: 0;
+  width: 100%;
+  box-sizing: border-box;
+  border-top: 1px solid #aaa;
   font-size: 2.5em;
+  padding: 2rem 1rem;
 `;
 
 const Actions = styled.div`
-  position: absolute;
+  width: 100%;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
-  right: 0rem;
-  bottom: 0rem;
-  padding: 0.5rem 1rem;
-  background: rgba(0, 0, 0, .25);
-  border-radius: 4px 0 0 0;
-  border: 1px solid #aaa;
-  border-bottom: 0;
-  border-right: 0;
+  padding: 0 1rem;
 `;
 
 class Org extends PureComponent {
@@ -174,7 +171,17 @@ class Org extends PureComponent {
     return (
       <Scroll>
         <Wrapper>
-          <Heading cover={`${API.baseURL}org/${id}/cover`}>
+          <Cover cover={`${API.baseURL}org/${id}/cover`}>
+            {isAdmin ? (
+              <Button
+                type="button"
+                onClick={() => this.updateImage('cover')}
+              >
+                <TiUpload />
+              </Button>
+            ) : null}
+          </Cover>
+          <Grid>
             <Info>
               <Logo>
                 <img src={`${API.baseURL}org/${id}/logo`} />
@@ -190,38 +197,30 @@ class Org extends PureComponent {
               <Name>
                 { name }
               </Name>
+              <Actions>
+                {isAdmin ? (
+                  <Button
+                    type="button"
+                  >
+                    <TiPlus />
+                    <Translate value="Org.createRoom" />
+                  </Button>
+                ) : null}
+                {!isAuth ? <Login /> : null}
+              </Actions>
             </Info>
-            <Actions>
-              {isAdmin ? (
-                <Button
-                  type="button"
-                >
-                  <TiPlus />
-                  <Translate value="Org.createRoom" />
-                </Button>
-              ) : null}
-              {!isAuth ? <Login /> : null}
-            </Actions>
-            {isAdmin ? (
-              <Button
-                type="button"
-                onClick={() => this.updateImage('cover')}
-              >
-                <TiUpload />
-              </Button>
+            {isUser && isActive ? <Rooms org={slug} /> : null}
+            {isUser && !isActive ? (
+              <div>
+                Pending approval
+              </div>
             ) : null}
-          </Heading>
-          {isUser && isActive ? <Rooms org={slug} /> : null}
-          {isUser && !isActive ? (
-            <div>
-              Pending approval
-            </div>
-          ) : null}
-          {isAuth && !isUser ? (
-            <div>
-              <a>Request approval</a>
-            </div>
-          ) : null}
+            {isAuth && !isUser ? (
+              <div>
+                <a>Request approval</a>
+              </div>
+            ) : null}
+          </Grid>
         </Wrapper>
       </Scroll>
     );

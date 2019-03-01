@@ -49,7 +49,7 @@ const Heading = styled.div`
   }
 `;
 
-const Columns = styled.div`
+const Grid = styled.div`
   display: flex;
   height: 100%;
   > div, > ul {
@@ -176,7 +176,7 @@ class Landing extends PureComponent {
             <h2>BabelChat</h2>
             <p>Create your own language exchange service in seconds</p>
           </Heading>
-          <Columns>
+          <Grid>
             <Features>
               <li>
                 1 to 1 conversations with students
@@ -212,7 +212,7 @@ class Landing extends PureComponent {
                 <Login />
               )}
             </Orgs>
-          </Columns>
+          </Grid>
           <CTA>
             <p>
               <Translate value="Org.CTA.copy" />
