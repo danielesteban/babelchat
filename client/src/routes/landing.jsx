@@ -194,7 +194,7 @@ class Landing extends PureComponent {
                 Integrate it onto your website
               </li>
               <li>
-                Free of charge while in open alpha
+                Free unlimited rooms/students while in open alpha
               </li>
             </Features>
             <Orgs>
