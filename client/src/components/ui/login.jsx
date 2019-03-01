@@ -50,8 +50,8 @@ class Login extends PureComponent {
       `width=${w},height=${h},top=${top},left=${left}`
     );
     if (this.popupWatcher) {
-      clearInterval(this.popupWatcher);
       window.removeEventListener('message', this.onMessage);
+      clearInterval(this.popupWatcher);
     }
     this.popupWatcher = setInterval(() => {
       if (!win.window) {

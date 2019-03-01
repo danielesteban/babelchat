@@ -121,3 +121,37 @@ module.exports.join = (peer, req) => {
       ))
     ));
 };
+
+module.exports.remove = [
+  param('org')
+    .isMongoId(),
+  param('slug')
+    .not().isEmpty()
+    .isLowercase()
+    .trim(),
+  checkValidationResult,
+  (req, res, next) => {
+    const { org, slug } = req.params;
+    return OrgUser
+      .findOne({
+        admin: true,
+        active: true,
+        user: req.user._id,
+        org,
+      })
+      .then((isOrgAdmin) => {
+        if (!isOrgAdmin) {
+          throw unauthorized();
+        }
+        return Room
+          .deleteOne({ org, slug })
+          .then(() => (
+            Rooms.remove(`${org}::${slug}`)
+          ));
+      })
+      .then(() => (
+        res.status(200).end()
+      ))
+      .catch(next);
+  },
+];

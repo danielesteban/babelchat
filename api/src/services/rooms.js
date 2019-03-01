@@ -209,3 +209,11 @@ module.exports = (room) => {
   rooms[key] = new Room(room);
   return rooms[key];
 };
+
+module.exports.remove = (room) => {
+  if (rooms[room]) {
+    rooms[room].peers
+      .forEach(peer => peer.close());
+    delete rooms[room];
+  }
+};

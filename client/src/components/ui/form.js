@@ -14,6 +14,7 @@ export default styled.form`
     }
     > input, > select {
       display: block;
+      font-family: inherit;
       box-sizing: border-box;
       width: 100%;
       padding: 0.5rem;

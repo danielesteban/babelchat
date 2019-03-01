@@ -19,11 +19,25 @@ export function fetch(slug) {
 export function fetchRooms() {
   return (dispatch, getState) => {
     const { org: { id } } = getState();
-    dispatch({
+    return dispatch({
       type: types.ORG_FETCH_ROOMS,
       payload: API.fetch({
         endpoint: `rooms/${id}`,
       }),
+    });
+  };
+}
+
+export function removeRoom(slug) {
+  return (dispatch, getState) => {
+    const { org: { id: org } } = getState();
+    return dispatch({
+      type: types.ORG_REMOVE_ROOM,
+      payload: API.fetch({
+        endpoint: `room/${org}/${slug}`,
+        method: 'DELETE',
+      })
+        .then(() => ({ slug })),
     });
   };
 }

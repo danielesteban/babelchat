@@ -14,11 +14,21 @@ import Button from '@/components/ui/button';
 import Login from '@/components/ui/login';
 import API from '@/services/api';
 
+const Scroll = styled.div`
+  display: flex;
+  width: 100%;
+  overflow-y: auto;
+`;
+
 const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
   background: #fff;
   width: 100%;
   max-width: 900px;
   margin: 0 auto;
+  text-align: center;
+  box-shadow: 0 0 150px rgba(0, 0, 0, .15);
 `;
 
 const uploadButton = `
@@ -162,56 +172,58 @@ class Org extends PureComponent {
       return null;
     }
     return (
-      <Wrapper>
-        <Heading cover={`${API.baseURL}org/${id}/cover`}>
-          <Info>
-            <Logo>
-              <img src={`${API.baseURL}org/${id}/logo`} />
+      <Scroll>
+        <Wrapper>
+          <Heading cover={`${API.baseURL}org/${id}/cover`}>
+            <Info>
+              <Logo>
+                <img src={`${API.baseURL}org/${id}/logo`} />
+                {isAdmin ? (
+                  <Button
+                    type="button"
+                    onClick={() => this.updateImage('logo')}
+                  >
+                    <TiUpload />
+                  </Button>
+                ) : null}
+              </Logo>
+              <Name>
+                { name }
+              </Name>
+            </Info>
+            <Actions>
               {isAdmin ? (
                 <Button
                   type="button"
-                  onClick={() => this.updateImage('logo')}
                 >
-                  <TiUpload />
+                  <TiPlus />
+                  <Translate value="Org.createRoom" />
                 </Button>
               ) : null}
-            </Logo>
-            <Name>
-              { name }
-            </Name>
-          </Info>
-          <Actions>
+              {!isAuth ? <Login /> : null}
+            </Actions>
             {isAdmin ? (
               <Button
                 type="button"
+                onClick={() => this.updateImage('cover')}
               >
-                <TiPlus />
-                <Translate value="Org.createRoom" />
+                <TiUpload />
               </Button>
             ) : null}
-            {!isAuth ? <Login /> : null}
-          </Actions>
-          {isAdmin ? (
-            <Button
-              type="button"
-              onClick={() => this.updateImage('cover')}
-            >
-              <TiUpload />
-            </Button>
+          </Heading>
+          {isUser && isActive ? <Rooms org={slug} /> : null}
+          {isUser && !isActive ? (
+            <div>
+              Pending approval
+            </div>
           ) : null}
-        </Heading>
-        {isUser && isActive ? <Rooms org={slug} /> : null}
-        {isUser && !isActive ? (
-          <div>
-            Pending approval
-          </div>
-        ) : null}
-        {isAuth && !isUser ? (
-          <div>
-            <a>Request approval</a>
-          </div>
-        ) : null}
-      </Wrapper>
+          {isAuth && !isUser ? (
+            <div>
+              <a>Request approval</a>
+            </div>
+          ) : null}
+        </Wrapper>
+      </Scroll>
     );
   }
 }

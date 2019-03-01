@@ -106,6 +106,8 @@ const rooms = (
   switch (action.type) {
     case types.ORG_FETCH_ROOMS_FULFILLED:
       return action.payload.sort(({ name: a }, { name: b }) => a.localeCompare(b));
+    case types.ORG_REMOVE_ROOM_FULFILLED:
+      return state.filter(({ slug }) => (slug !== action.payload.slug));
     case types.ORG_RESET:
       return [];
     default:

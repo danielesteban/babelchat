@@ -1,10 +1,11 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
+import { TiTrash } from 'react-icons/ti';
 import { connect } from 'react-redux';
 import { Translate } from 'react-redux-i18n';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { fetchRooms as fetch } from '@/actions/org';
+import { fetchRooms as fetch, removeRoom } from '@/actions/org';
 
 const Listing = styled.div`
   display: flex;
@@ -41,6 +42,19 @@ const Listing = styled.div`
       background-color: #393;
     }
   }
+  &.admin > a {
+    > svg {
+      display: none;
+    }
+    &:hover {
+      > span {
+        display: none;
+      }
+      > svg {
+        display: block;
+      }
+    }
+  }
 `;
 
 class Rooms extends PureComponent {
@@ -49,10 +63,16 @@ class Rooms extends PureComponent {
     fetch();
   }
 
+  onRemove(e, slug) {
+    const { removeRoom } = this.props;
+    e.preventDefault();
+    removeRoom(slug);
+  }
+
   render() {
-    const { list, org } = this.props;
+    const { isAdmin, list, org } = this.props;
     return (
-      <Listing>
+      <Listing className={isAdmin ? 'admin' : null}>
         {list.map(({
           flag,
           name,
@@ -76,6 +96,11 @@ class Rooms extends PureComponent {
               limit={peerLimit}
               value="Rooms.peers"
             />
+            {isAdmin ? (
+              <TiTrash
+                onClick={e => this.onRemove(e, slug)}
+              />
+            ) : null}
           </Link>
         ))}
       </Listing>
@@ -84,6 +109,7 @@ class Rooms extends PureComponent {
 }
 
 Rooms.propTypes = {
+  isAdmin: PropTypes.bool.isRequired,
   list: PropTypes.arrayOf(PropTypes.shape({
     flag: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
@@ -93,17 +119,21 @@ Rooms.propTypes = {
   })).isRequired,
   org: PropTypes.string.isRequired,
   fetch: PropTypes.func.isRequired,
+  removeRoom: PropTypes.func.isRequired,
 };
 
 export default connect(
   ({
     org: {
+      isAdmin,
       rooms: list,
     },
   }) => ({
+    isAdmin,
     list,
   }),
   {
     fetch,
+    removeRoom,
   }
 )(Rooms);

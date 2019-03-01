@@ -26,6 +26,7 @@ const Wrapper = styled.div`
   max-width: 900px;
   margin: 0 auto;
   text-align: center;
+  box-shadow: 0 0 150px rgba(0, 0, 0, .15);
 `;
 
 const Heading = styled.div`
@@ -178,25 +179,22 @@ class Landing extends PureComponent {
           <Columns>
             <Features>
               <li>
+                1 to 1 conversations with students
+              </li>
+              <li>
                 Group videochat rooms (up to 8 peers)
               </li>
               <li>
-                1 to 1 conversations with students
+                Whiteboard with drag&drop image sharing
               </li>
               <li>
                 Customize it with your own branding
               </li>
               <li>
-                Integrate it on your website
+                Integrate it onto your website
               </li>
               <li>
-                Another key feature
-              </li>
-              <li>
-                Yet another key feature
-              </li>
-              <li>
-                Some more key features
+                Free of charge while in open alpha
               </li>
             </Features>
             <Orgs>

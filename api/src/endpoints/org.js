@@ -157,8 +157,8 @@ module.exports.updateImage = [
         user: req.user._id,
         org: id,
       })
-      .then((isOrgUser) => {
-        if (!isOrgUser) {
+      .then((isOrgAdmin) => {
+        if (!isOrgAdmin) {
           throw unauthorized();
         }
         return Org

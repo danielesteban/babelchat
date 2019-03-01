@@ -187,6 +187,38 @@ module.exports = (api) => {
     room.list
   );
 
+  /**
+   * @swagger
+   * /room/{org}/{slug}:
+   *   delete:
+   *     description: Delete a room
+   *     tags: [Room]
+   *     parameters:
+   *       - name: org
+   *         in: path
+   *         description: Org id
+   *         required: true
+   *         schema:
+   *           type: string
+   *       - name: id
+   *         in: path
+   *         description: Room slug
+   *         required: true
+   *         schema:
+   *           type: string
+   *     responses:
+   *       200:
+   *         description: Successfully removed
+   *       401:
+   *         description: Invalid/expired session token
+   */
+  api.delete(
+    '/room/:org/:slug',
+    preventCache,
+    requireAuth,
+    room.remove
+  );
+
   // Room socket
   api.ws(
     '/room/:org/:slug',
