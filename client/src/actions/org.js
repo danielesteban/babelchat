@@ -90,7 +90,7 @@ export function resolveRequest({ user, resolution }) {
         method: 'POST',
       })
         .then(() => ({
-          id,
+          user,
           resolution,
         })),
     });

@@ -86,7 +86,7 @@ const Orgs = styled.div`
     }
   }
   > button {
-    margin: 0 auto;
+    margin: 1.5rem auto;
     > svg {
       font-size: 2em;
     }

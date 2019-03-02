@@ -181,7 +181,7 @@ const users = (
     case types.ORG_RESOLVE_REQUEST_FULFILLED:
       if (action.payload.resolution === 'approve') {
         return state.map((user) => {
-          if (user._id === action.payload.id) {
+          if (user._id === action.payload.user) {
             return {
               ...user,
               isRequest: undefined,
@@ -190,7 +190,7 @@ const users = (
           return user;
         });
       }
-      return state.filter(({ _id }) => (_id !== action.payload.id));
+      return state.filter(({ _id }) => (_id !== action.payload.user));
     case types.ORG_RESET:
       return [];
     default:

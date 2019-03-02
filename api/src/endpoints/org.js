@@ -290,13 +290,13 @@ module.exports.resolveAccessRequest = [
             org,
             user,
           })
-          .then((user) => {
-            if (!user) {
+          .then((request) => {
+            if (!request) {
               throw notFound();
             }
             if (resolution === 'approve') {
-              user.active = true;
-              return user
+              request.active = true;
+              return request
                 .save();
             }
             return OrgUser
