@@ -5,7 +5,7 @@ const Rooms = require('../services/rooms');
 const { checkValidationResult } = require('../services/errorHandler');
 
 module.exports.create = [
-  param('org')
+  param('id')
     .isMongoId(),
   body('flag')
     .not().isEmpty()
@@ -21,7 +21,7 @@ module.exports.create = [
   checkValidationResult,
   (req, res, next) => {
     const { flag, name, peerLimit } = req.body;
-    const { org } = req.params;
+    const { id: org } = req.params;
     return OrgUser
       .isOrgAdmin({
         user: req.user._id,
@@ -51,11 +51,11 @@ module.exports.create = [
 ];
 
 module.exports.list = [
-  param('org')
+  param('id')
     .isMongoId(),
   checkValidationResult,
   (req, res, next) => {
-    const { org } = req.params;
+    const { id: org } = req.params;
     // Access control
     return OrgUser
       .findOne({
@@ -96,7 +96,7 @@ module.exports.join = (peer, req) => {
   };
   peer.once('close', onClose);
 
-  const { org, slug } = req.params;
+  const { id: org, slug } = req.params;
   // Fetch org
   Org
     .findOne({ slug: org })
@@ -169,7 +169,7 @@ module.exports.join = (peer, req) => {
 };
 
 module.exports.remove = [
-  param('org')
+  param('id')
     .isMongoId(),
   param('slug')
     .not().isEmpty()
@@ -177,7 +177,7 @@ module.exports.remove = [
     .trim(),
   checkValidationResult,
   (req, res, next) => {
-    const { org, slug } = req.params;
+    const { id: org, slug } = req.params;
     return OrgUser
       .isOrgAdmin({
         user: req.user._id,

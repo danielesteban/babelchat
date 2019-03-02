@@ -76,14 +76,14 @@ class Users extends PureComponent {
               <div>
                 <Button
                   type="button"
-                  onClick={() => resolveRequest({ id: _id, resolution: 'decline' })}
+                  onClick={() => resolveRequest({ user: _id, resolution: 'decline' })}
                 >
                   <TiTimes />
                   <Translate value="Org.Request.decline" />
                 </Button>
                 <Button
                   type="button"
-                  onClick={() => resolveRequest({ id: _id, resolution: 'approve' })}
+                  onClick={() => resolveRequest({ user: _id, resolution: 'approve' })}
                   primary
                 >
                   <TiTick />

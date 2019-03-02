@@ -269,15 +269,15 @@ module.exports.updateImage = [
 ];
 
 module.exports.resolveAccessRequest = [
-  param('org')
-    .isMongoId(),
   param('id')
+    .isMongoId(),
+  param('user')
     .isMongoId(),
   param('resolution')
     .isIn(['approve', 'decline']),
   checkValidationResult,
   (req, res, next) => {
-    const { id, org, resolution } = req.params;
+    const { id: org, user, resolution } = req.params;
     return OrgUser
       .isOrgAdmin({
         user: req.user._id,
@@ -288,7 +288,7 @@ module.exports.resolveAccessRequest = [
           .findOne({
             active: false,
             org,
-            user: id,
+            user,
           })
           .then((user) => {
             if (!user) {
@@ -302,7 +302,7 @@ module.exports.resolveAccessRequest = [
             return OrgUser
               .deleteOne({
                 org,
-                user: id,
+                user,
               });
           })
       ))

@@ -8,7 +8,7 @@ export function createRoom({ flag, name, peerLimit }) {
       type: types.ORG_CREATE_ROOM,
       payload: API.fetch({
         body: { flag, name, peerLimit },
-        endpoint: `rooms/${id}`,
+        endpoint: `org/${id}/rooms`,
         method: 'PUT',
       }),
     });
@@ -48,7 +48,7 @@ export function fetchRooms() {
     return dispatch({
       type: types.ORG_FETCH_ROOMS,
       payload: API.fetch({
-        endpoint: `rooms/${id}`,
+        endpoint: `org/${id}/rooms`,
       }),
     });
   };
@@ -60,7 +60,7 @@ export function fetchUsers() {
     return dispatch({
       type: types.ORG_FETCH_USERS,
       payload: API.fetch({
-        endpoint: `users/${id}`,
+        endpoint: `org/${id}/users`,
       }),
     });
   };
@@ -68,11 +68,11 @@ export function fetchUsers() {
 
 export function removeRoom(slug) {
   return (dispatch, getState) => {
-    const { org: { id: org } } = getState();
+    const { org: { id } } = getState();
     return dispatch({
       type: types.ORG_REMOVE_ROOM,
       payload: API.fetch({
-        endpoint: `room/${org}/${slug}`,
+        endpoint: `org/${id}/room/${slug}`,
         method: 'DELETE',
       })
         .then(() => ({ slug })),
@@ -80,13 +80,13 @@ export function removeRoom(slug) {
   };
 }
 
-export function resolveRequest({ id, resolution }) {
+export function resolveRequest({ user, resolution }) {
   return (dispatch, getState) => {
-    const { org: { id: org } } = getState();
+    const { org: { id } } = getState();
     return dispatch({
       type: types.ORG_RESOLVE_REQUEST,
       payload: API.fetch({
-        endpoint: `user/${org}/${id}/${resolution}`,
+        endpoint: `org/${id}/user/${user}/${resolution}`,
         method: 'POST',
       })
         .then(() => ({
@@ -103,7 +103,7 @@ export function requestAccess() {
     return dispatch({
       type: types.ORG_REQUEST_ACCESS,
       payload: API.fetch({
-        endpoint: `users/${id}`,
+        endpoint: `org/${id}/users`,
         method: 'PUT',
       }),
     });
@@ -123,7 +123,7 @@ export function signup({ name }) {
       body: {
         name,
       },
-      endpoint: 'org',
+      endpoint: 'orgs',
       method: 'PUT',
     }),
   };
@@ -157,7 +157,7 @@ export function updateImage({ image, blob }) {
       payload: API.fetch({
         body,
         endpoint: `org/${id}/${image}`,
-        method: 'PUT',
+        method: 'POST',
       }),
     });
   };

@@ -154,7 +154,7 @@ class Events extends Component {
     }
     showLoading();
     this.socket = new WebSocket(
-      `${API.baseURL.replace(/http/, 'ws')}room/${org}/${slug}`,
+      `${API.baseURL.replace(/http/, 'ws')}org/${org}/room/${slug}`,
       API.token
     );
     this.socket.onopen = () => {
