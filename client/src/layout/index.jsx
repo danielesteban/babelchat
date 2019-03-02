@@ -10,7 +10,8 @@ const Route = styled.div`
 `;
 
 const loadingBarStyle = {
-  backgroundColor: '#bebebe',
+  backgroundColor: '#393',
+  zIndex: 1,
 };
 
 const Layout = ({ children }) => (

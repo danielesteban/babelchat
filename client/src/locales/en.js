@@ -11,7 +11,11 @@ export default {
     peers: '%{count}/%{limit} peers',
   },
   Org: {
-    createRoom: 'Create room',
+    Nav: {
+      createRoom: 'Create room',
+      manageUsers: 'Manage Users',
+      customizePalette: 'Customize Palette',
+    },
     CTA: {
       copy: 'Are you an academy manager/teacher?',
       button: 'Try it now',

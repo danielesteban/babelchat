@@ -9,25 +9,9 @@ import Button from '@/components/ui/button';
 import Login from '@/components/ui/login';
 import Dialog from '@/components/ui/dialog';
 import Form from '@/components/ui/form';
+import Page from '@/components/ui/page';
 import { showSignup, signup, hideSignup } from '@/actions/org';
 import { fetchOrgs } from '@/actions/user';
-
-const Scroll = styled.div`
-  display: flex;
-  width: 100%;
-  overflow-y: auto;
-`;
-
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  background: #fff;
-  width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
-  text-align: center;
-  box-shadow: 0 0 150px rgba(0, 0, 0, .15);
-`;
 
 const Heading = styled.div`
   display: flex;
@@ -59,15 +43,18 @@ const Grid = styled.div`
     &:nth-child(2) {
       width: 40%;
     }
-    > h3 {
-      font-size: 2em;
-      margin: 1.5rem 0;
-    }
   }
 `;
 
 const Orgs = styled.div`
   background: #eee;
+  > h3 {
+    margin: 0;
+    font-size: 1.5em;
+    color: #666;
+    padding: 1.5rem 1.5rem 1rem;
+    border-bottom: 1px solid #ddd;
+  }
   > a {
     display: flex;
     box-sizing: border-box;
@@ -75,7 +62,7 @@ const Orgs = styled.div`
     align-items: center;
     justify-content: space-between;
     font-size: 1.5em;
-    padding: 0.5rem 1.5rem;
+    padding: 0.75rem 1.5rem;
     color: #000;
     text-decoration: none;
     transition: color ease-out .15s, background-color ease-out .15s;
@@ -100,8 +87,6 @@ const Orgs = styled.div`
   }
   > button {
     margin: 0 auto;
-    width: 50%;
-    font-size: 1.5em;    
     > svg {
       font-size: 2em;
     }
@@ -124,6 +109,7 @@ const CTA = styled.div`
   color: #eee;
   > p {
     font-size: 1.5em;
+    text-align: center;
   }
   > button {
     margin: 0 auto;
@@ -177,92 +163,90 @@ class Landing extends PureComponent {
       showSignup,
     } = this.props;
     return (
-      <Scroll>
-        <Wrapper>
-          <Heading>
-            <h2>BabelChat</h2>
-            <p>Create your own language exchange service in seconds</p>
-          </Heading>
-          <Grid>
-            <Features>
-              <li>
-                1 to 1 conversations with students
-              </li>
-              <li>
-                Group videochat rooms (up to 8 peers)
-              </li>
-              <li>
-                Whiteboard with drag&drop image sharing
-              </li>
-              <li>
-                Customize it with your own branding
-              </li>
-              <li>
-                Integrate it onto your website
-              </li>
-              <li>
-                Free unlimited rooms/students while in open alpha
-              </li>
-            </Features>
-            <Orgs>
-              <h3>Your orgs</h3>
-              {isAuth ? (
-                orgs.map(({ name, slug }) => (
-                  <Link
-                    key={slug}
-                    to={{ pathname: `/${slug}` }}
-                  >
-                    {name}
-                  </Link>
-                ))
-              ) : (
-                <Login />
-              )}
-            </Orgs>
-          </Grid>
-          <CTA>
-            <p>
-              <Translate value="Org.CTA.copy" />
-            </p>
+      <Page>
+        <Heading>
+          <h2>BabelChat</h2>
+          <p>Create your own language exchange service in seconds</p>
+        </Heading>
+        <Grid>
+          <Features>
+            <li>
+              1 to 1 conversations with students
+            </li>
+            <li>
+              Group videochat rooms (up to 8 peers)
+            </li>
+            <li>
+              Whiteboard with drag&drop image sharing
+            </li>
+            <li>
+              Customize it with your own branding
+            </li>
+            <li>
+              Integrate it onto your website
+            </li>
+            <li>
+              Free unlimited rooms/students while in open alpha
+            </li>
+          </Features>
+          <Orgs>
+            <h3>Your orgs</h3>
             {isAuth ? (
-              <Button
-                type="button"
-                onClick={showSignup}
-              >
-                <TiGroup />
-                <Translate value="Org.CTA.button" />
-              </Button>
+              orgs.map(({ name, slug }) => (
+                <Link
+                  key={slug}
+                  to={{ pathname: `/${slug}` }}
+                >
+                  {name}
+                </Link>
+              ))
             ) : (
-              <Login
-                icon={TiGroup}
-                label="Org.CTA.button"
-                onSession={showSignup}
-              />
+              <Login />
             )}
-          </CTA>
-          {isSigningup ? (
-            <Dialog
-              title="Org.Signup.title"
-              hide={hideSignup}
+          </Orgs>
+        </Grid>
+        <CTA>
+          <p>
+            <Translate value="Org.CTA.copy" />
+          </p>
+          {isAuth ? (
+            <Button
+              type="button"
+              onClick={showSignup}
             >
-              <Form onSubmit={this.onSubmit}>
-                <div>
-                  <label><Translate value="Org.Signup.name" /></label>
-                  <input type="text" name="name" />
-                </div>
-                <div className="submit">
-                  <Button
-                    type="submit"
-                  >
-                    <TiPlus />
-                    <Translate value="Org.Signup.submit" />
-                  </Button>
-                </div>
-              </Form>
-            </Dialog>
-          ) : null}
-        </Wrapper>
-      </Scroll>
+              <TiGroup />
+              <Translate value="Org.CTA.button" />
+            </Button>
+          ) : (
+            <Login
+              icon={TiGroup}
+              label="Org.CTA.button"
+              onSession={showSignup}
+            />
+          )}
+        </CTA>
+        {isSigningup ? (
+          <Dialog
+            title="Org.Signup.title"
+            hide={hideSignup}
+          >
+            <Form onSubmit={this.onSubmit}>
+              <div>
+                <label><Translate value="Org.Signup.name" /></label>
+                <input type="text" name="name" />
+              </div>
+              <div className="submit">
+                <Button
+                  type="submit"
+                >
+                  <TiPlus />
+                  <Translate value="Org.Signup.submit" />
+                </Button>
+              </div>
+            </Form>
+          </Dialog>
+        ) : null}
+      </Page>
     );
   }
 }

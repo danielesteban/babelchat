@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react';
 import {
   TiGroup,
   TiMessages,
-  TiPlus,
+  TiPipette,
   TiUpload,
 } from 'react-icons/ti';
 import { connect } from 'react-redux';
@@ -18,32 +18,44 @@ import {
 import Rooms from '@/components/org/rooms';
 import Button from '@/components/ui/button';
 import Login from '@/components/ui/login';
+import Page from '@/components/ui/page';
 import API from '@/services/api';
 
-const Scroll = styled.div`
-  display: flex;
-  width: 100%;
-  overflow-y: auto;
+const NavWidth = '212px';
+
+const Layout = styled(Page)`
+  flex-direction: row;
+  > div {
+    box-sizing: border-box;
+    flex-shrink: 0;
+  }
 `;
 
-const Wrapper = styled.div`
+const Nav = styled.div`
+  display: flex;
+  width: ${NavWidth};
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  background: #222;
+  color: #eee;
+`;
+
+const Content = styled.div`
+  width: calc(100% - ${NavWidth});
   display: flex;
   flex-direction: column;
-  background: #fff;
-  width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
-  box-shadow: 0 0 150px rgba(0, 0, 0, .15);
 `;
 
 const uploadButton = `
   > button {
     position: absolute;
     bottom: 0;
-    left: 0;
+    right: 0;
     padding: 0.25rem;
     display: flex;
     font-size: 1.5em;
+    border-radius: 2px 0 0 0;
     opacity: 0;
     transition: opacity ease-out .2s;
   }
@@ -52,44 +64,12 @@ const uploadButton = `
   }
 `;
 
-const Cover = styled.div`
-  flex-shrink: 0;
-  background: #eee;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-image: url(${props => props.cover});
-  width: 100%;
-  height: 300px;
-  position: relative;
-  ${uploadButton}
-`;
-
-const Grid = styled.div`
-  display: flex;
-  height: 100%;
-  > div, > ul {
-    &:nth-child(1) {
-      flex-shrink: 0;
-      width: 200px;
-    }
-    &:nth-child(2) {
-      width: calc(100% - 200px);
-    }
-  }
-`;
-
-const Info = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
 const Logo = styled.div`
   position: relative;
   > img {
-    width: 200px;
-    height: 200px;
-    background: #ccc;
+    width: 180px;
+    height: 180px;
+    background: #000;
     overflow: hidden;
     vertical-align: middle;
   }
@@ -98,35 +78,49 @@ const Logo = styled.div`
 
 const Name = styled.div`
   width: 100%;
-  box-sizing: border-box;
-  border-top: 1px solid #aaa;
-  font-size: 2.5em;
-  padding: 2rem 1rem;
+  font-size: 1.666em;
+  padding: 1rem 0;
 `;
 
 const Actions = styled.div`
   width: 100%;
-  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 1rem;
   > button {
     width: 100%;
     margin: 0 0 0.5rem;
     justify-content: flex-start;
+    > svg {
+      font-size: 1.5em;
+      margin-right: 0.25rem;
+    }
   }
+`;
+
+const Cover = styled.div`
+  flex-shrink: 0;
+  background: #000;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-image: url(${props => props.cover});
+  width: 100%;
+  height: 312px;
+  position: relative;
+  ${uploadButton}
 `;
 
 const Section = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #eee;
   padding: 3rem 0;
   > p {
     font-size: 1.5rem;
     color: #666;
+  }
+  > button > svg {
+    font-size: 2em;
   }
 `;
 
@@ -194,8 +188,46 @@ class Org extends PureComponent {
       return null;
     }
     return (
-      <Scroll>
-        <Wrapper>
+      <Layout>
+        <Nav>
+          <Logo>
+            <img src={`${API.baseURL}org/${id}/logo`} />
+            {isAdmin ? (
+              <Button
+                type="button"
+                onClick={() => this.updateImage('logo')}
+              >
+                <TiUpload />
+              </Button>
+            ) : null}
+          </Logo>
+          <Name>
+            { name }
+          </Name>
+          {isAdmin ? (
+            <Actions>
+              <Button
+                type="button"
+              >
+                <TiMessages />
+                <Translate value="Org.Nav.createRoom" />
+              </Button>
+              <Button
+                type="button"
+              >
+                <TiGroup />
+                <Translate value="Org.Nav.manageUsers" />
+              </Button>
+              <Button
+                type="button"
+              >
+                <TiPipette />
+                <Translate value="Org.Nav.customizePalette" />
+              </Button>
+            </Actions>
+          ) : null}
+        </Nav>
+        <Content>
           <Cover cover={`${API.baseURL}org/${id}/cover`}>
             {isAdmin ? (
               <Button
@@ -206,77 +238,37 @@ class Org extends PureComponent {
               </Button>
             ) : null}
           </Cover>
-          <Grid>
-            <Info>
-              <Logo>
-                <img src={`${API.baseURL}org/${id}/logo`} />
-                {isAdmin ? (
-                  <Button
-                    type="button"
-                    onClick={() => this.updateImage('logo')}
-                  >
-                    <TiUpload />
-                  </Button>
-                ) : null}
-              </Logo>
-              <Name>
-                { name }
-              </Name>
-              {isAdmin ? (
-                <Actions>
-                  <Button
-                    type="button"
-                  >
-                    <TiGroup />
-                    <Translate value="Org.manageStudents" />
-                  </Button>
-                  <Button
-                    type="button"
-                  >
-                    <TiPlus />
-                    <Translate value="Org.addToYourWebsite" />
-                  </Button>
-                  <Button
-                    type="button"
-                  >
-                    <TiMessages />
-                    <Translate value="Org.createRoom" />
-                  </Button>
-                </Actions>
-              ) : null}
-            </Info>
-            {isUser && isActive ? <Rooms org={slug} /> : null}
-            {isUser && !isActive ? (
-              <Section>
-                <p>
-                  Your account is pending approval
-                </p>
-              </Section>
-            ) : null}
-            {isAuth && !isUser ? (
-              <Section>
-                <p>
-                  Your are not a student of this organization
-                </p>
-                <Button
-                  type="button"
-                  onClick={requestAccess}
-                >
-                  Request access
-                </Button>
-              </Section>
-            ) : null}
-            {!isAuth ? (
-              <Section>
-                <p>
-                  Welcome, please sign-in:
-                </p>
-                <Login />
-              </Section>
-            ) : null}
-          </Grid>
-        </Wrapper>
-      </Scroll>
+          {isUser && isActive ? <Rooms org={slug} /> : null}
+          {isUser && !isActive ? (
+            <Section>
+              <p>
+                Your account is pending approval
+              </p>
+            </Section>
+          ) : null}
+          {isAuth && !isUser ? (
+            <Section>
+              <p>
+                Your are not a student of this organization
+              </p>
+              <Button
+                type="button"
+                onClick={requestAccess}
+              >
+                Request access
+              </Button>
+            </Section>
+          ) : null}
+          {!isAuth ? (
+            <Section>
+              <p>
+                Welcome, please sign-in:
+              </p>
+              <Login />
+            </Section>
+          ) : null}
+        </Content>
+      </Layout>
     );
   }
 }

@@ -11,7 +11,6 @@ const Listing = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #eee;
   > a {
     display: flex;
     box-sizing: border-box;
