@@ -13,18 +13,23 @@ import Button from '@/components/ui/button';
 import Dialog from '@/components/ui/dialog';
 import API from '@/services/api';
 
+const Scroll = styled.div`
+  max-height: 400px;
+  overflow-y: auto;
+`;
+
 const User = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  margin-bottom: 0.5rem;
+  &:last-child {
+    margin-bottom: 0;
+  }
   > div {
     display: flex;
     align-items: center;
-    margin-bottom: 0.5rem;    
-    &:last-child {
-      margin-bottom: 0;
-    }
     > button {
       margin-left: 0.5rem;
     }
@@ -60,39 +65,41 @@ class Users extends PureComponent {
         width="512px"
         hide={hide}
       >
-        {list.map(({
-          _id,
-          isRequest,
-          name,
-        }) => (
-          <User key={_id}>
-            <div>
-              <img
-                src={`${API.baseURL}user/${_id}/photo?auth=${API.token}`}
-              />
-              {name}
-            </div>
-            {isRequest ? (
+        <Scroll>
+          {list.map(({
+            _id,
+            isRequest,
+            name,
+          }) => (
+            <User key={_id}>
               <div>
-                <Button
-                  type="button"
-                  onClick={() => resolveRequest({ user: _id, resolution: 'decline' })}
-                >
-                  <TiTimes />
-                  <Translate value="Org.Request.decline" />
-                </Button>
-                <Button
-                  type="button"
-                  onClick={() => resolveRequest({ user: _id, resolution: 'approve' })}
-                  primary
-                >
-                  <TiTick />
-                  <Translate value="Org.Request.approve" />
-                </Button>
+                <img
+                  src={`${API.baseURL}user/${_id}/photo?auth=${API.token}`}
+                />
+                {name}
               </div>
-            ) : null}
-          </User>
-        ))}
+              {isRequest ? (
+                <div>
+                  <Button
+                    type="button"
+                    onClick={() => resolveRequest({ user: _id, resolution: 'decline' })}
+                  >
+                    <TiTimes />
+                    <Translate value="Org.Request.decline" />
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => resolveRequest({ user: _id, resolution: 'approve' })}
+                    primary
+                  >
+                    <TiTick />
+                    <Translate value="Org.Request.approve" />
+                  </Button>
+                </div>
+              ) : null}
+            </User>
+          ))}
+        </Scroll>
       </Dialog>
     );
   }
