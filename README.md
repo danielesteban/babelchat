@@ -1,9 +1,9 @@
 [BabelChat](https://babelchat.tk/)
 ===
 
-> Language Exchange OpenSource Platform
-
 [![Build Status](https://travis-ci.org/danielesteban/babelchat.svg?branch=master)](https://travis-ci.org/danielesteban/babelchat)
+
+> Language Exchange OpenSource Platform
 
 #### Dev environment
 
