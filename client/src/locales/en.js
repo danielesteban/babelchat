@@ -26,7 +26,7 @@ export default {
     audioInput: 'Audio input',
     settings: 'Settings',
     saveSettings: 'Save settings',
-    signIn: 'Sign-In',
+    signIn: 'Sign-In with google',
     videoInput: 'Video input',
   },
 };

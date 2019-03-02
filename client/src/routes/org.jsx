@@ -11,6 +11,7 @@ import { Translate } from 'react-redux-i18n';
 import styled from 'styled-components';
 import {
   fetch,
+  requestAccess,
   reset,
   updateImage,
 } from '@/actions/org';
@@ -117,6 +118,18 @@ const Actions = styled.div`
   }
 `;
 
+const Section = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #eee;
+  padding: 3rem 0;
+  > p {
+    font-size: 1.5rem;
+    color: #666;
+  }
+`;
+
 class Org extends PureComponent {
   componentWillMount() {
     this.fetch();
@@ -173,6 +186,7 @@ class Org extends PureComponent {
       isAdmin,
       isAuth,
       isUser,
+      requestAccess,
       match: { params: { slug } },
       name,
     } = this.props;
@@ -233,19 +247,32 @@ class Org extends PureComponent {
             </Info>
             {isUser && isActive ? <Rooms org={slug} /> : null}
             {isUser && !isActive ? (
-              <div>
-                Pending approval
-              </div>
+              <Section>
+                <p>
+                  Your account is pending approval
+                </p>
+              </Section>
             ) : null}
             {isAuth && !isUser ? (
-              <div>
-                <a>Request approval</a>
-              </div>
+              <Section>
+                <p>
+                  Your are not a student of this organization
+                </p>
+                <Button
+                  type="button"
+                  onClick={requestAccess}
+                >
+                  Request access
+                </Button>
+              </Section>
             ) : null}
             {!isAuth ? (
-              <div>
+              <Section>
+                <p>
+                  Welcome, please sign-in:
+                </p>
                 <Login />
-              </div>
+              </Section>
             ) : null}
           </Grid>
         </Wrapper>
@@ -271,6 +298,7 @@ Org.propTypes = {
   isUser: PropTypes.bool.isRequired,
   name: PropTypes.string.isRequired,
   fetch: PropTypes.func.isRequired,
+  requestAccess: PropTypes.func.isRequired,
   reset: PropTypes.func.isRequired,
   updateImage: PropTypes.func.isRequired,
 };
@@ -299,6 +327,7 @@ export default connect(
   }),
   {
     fetch,
+    requestAccess,
     reset,
     updateImage,
   }

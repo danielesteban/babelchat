@@ -78,6 +78,8 @@ const isUser = (
   switch (action.type) {
     case types.ORG_FETCH_FULFILLED:
       return action.payload.isUser || false;
+    case types.ORG_REQUEST_ACCESS_FULFILLED:
+      return true;
     case types.ORG_RESET:
       return false;
     default:

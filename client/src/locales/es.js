@@ -11,6 +11,6 @@ export default {
     peers: '%{count}/%{limit} personas',
   },
   User: {
-    signIn: 'Iniciar Sesión',
+    signIn: 'Iniciar Sesión con google',
   },
 };

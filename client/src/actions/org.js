@@ -54,6 +54,19 @@ export function removeRoom(slug) {
   };
 }
 
+export function requestAccess() {
+  return (dispatch, getState) => {
+    const { org: { id } } = getState();
+    return dispatch({
+      type: types.ORG_REQUEST_ACCESS,
+      payload: API.fetch({
+        endpoint: `users/${id}`,
+        method: 'PUT',
+      }),
+    });
+  };
+}
+
 export function reset() {
   return {
     type: types.ORG_RESET,
