@@ -133,22 +133,17 @@ module.exports.remove = [
   (req, res, next) => {
     const { org, slug } = req.params;
     return OrgUser
-      .findOne({
-        admin: true,
-        active: true,
+      .isOrgAdmin({
         user: req.user._id,
         org,
       })
-      .then((isOrgAdmin) => {
-        if (!isOrgAdmin) {
-          throw unauthorized();
-        }
-        return Room
+      .then(() => (
+        Room
           .deleteOne({ org, slug })
           .then(() => (
             Rooms.remove(`${org}::${slug}`)
-          ));
-      })
+          ))
+      ))
       .then(() => (
         res.status(200).end()
       ))

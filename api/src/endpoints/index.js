@@ -147,6 +147,106 @@ module.exports = (api) => {
 
   /**
    * @swagger
+   * /users/{id}:
+   *   get:
+   *     description: Get org users
+   *     tags: [OrgUser]
+   *     security: []
+   *     parameters:
+   *       - name: id
+   *         in: path
+   *         description: Org id
+   *         required: true
+   *         schema:
+   *           type: string
+   *     responses:
+   *       200:
+   *         description: Org users
+   *       401:
+   *         description: Invalid/expired session token
+   */
+  api.get(
+    '/users/:id',
+    preventCache,
+    requireAuth,
+    org.getUsers
+  );
+
+  /**
+   * @swagger
+   * /users/{id}:
+   *   put:
+   *     description: Request org access
+   *     tags: [OrgUser]
+   *     parameters:
+   *       - name: id
+   *         in: path
+   *         description: Org id
+   *         required: true
+   *         schema:
+   *           type: string
+   *     responses:
+   *       200:
+   *         description: Successfully requested
+   *       404:
+   *         description: Org not found
+   *       401:
+   *         description: Invalid/expired session token
+   */
+  api.put(
+    '/users/:id',
+    preventCache,
+    requireAuth,
+    org.requestAccess
+  );
+
+
+  /**
+   * @swagger
+   * /user/{org}/{id}:
+   *   post:
+   *     description: Update org user
+   *     tags: [OrgUser]
+   *     parameters:
+   *       - name: id
+   *         in: path
+   *         description: Org id
+   *         required: true
+   *         schema:
+   *           type: string
+   *       - name: id
+   *         in: path
+   *         description: User id
+   *         required: true
+   *         schema:
+   *           type: string
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         multipart/form-data:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               active:
+   *                 type: boolean
+   *                 description: Account status
+   *     responses:
+   *       200:
+   *         description: Successfully updated
+   *       404:
+   *         description: User not found
+   *       401:
+   *         description: Invalid/expired session token
+   */
+  api.post(
+    '/user/:org/:id',
+    preventCache,
+    requireAuth,
+    org.updateUser
+  );
+
+  /**
+   * @swagger
    * /rooms/{org}:
    *   get:
    *     description: Get an org's room list

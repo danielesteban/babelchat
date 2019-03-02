@@ -1,6 +1,11 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import { TiPlus, TiUpload } from 'react-icons/ti';
+import {
+  TiGroup,
+  TiMessages,
+  TiPlus,
+  TiUpload,
+} from 'react-icons/ti';
 import { connect } from 'react-redux';
 import { Translate } from 'react-redux-i18n';
 import styled from 'styled-components';
@@ -47,14 +52,13 @@ const uploadButton = `
 `;
 
 const Cover = styled.div`
-  box-sizing: border-box;
+  flex-shrink: 0;
   background: #eee;
   background-repeat: no-repeat;
   background-size: cover;
   background-image: url(${props => props.cover});
   width: 100%;
   height: 300px;
-  border-bottom: 1px solid #aaa;
   position: relative;
   ${uploadButton}
 `;
@@ -64,6 +68,7 @@ const Grid = styled.div`
   height: 100%;
   > div, > ul {
     &:nth-child(1) {
+      flex-shrink: 0;
       width: 200px;
     }
     &:nth-child(2) {
@@ -102,8 +107,14 @@ const Actions = styled.div`
   width: 100%;
   box-sizing: border-box;
   display: flex;
+  flex-direction: column;
   align-items: center;
   padding: 0 1rem;
+  > button {
+    width: 100%;
+    margin: 0 0 0.5rem;
+    justify-content: flex-start;
+  }
 `;
 
 class Org extends PureComponent {
@@ -197,17 +208,28 @@ class Org extends PureComponent {
               <Name>
                 { name }
               </Name>
-              <Actions>
-                {isAdmin ? (
+              {isAdmin ? (
+                <Actions>
+                  <Button
+                    type="button"
+                  >
+                    <TiGroup />
+                    <Translate value="Org.manageStudents" />
+                  </Button>
                   <Button
                     type="button"
                   >
                     <TiPlus />
+                    <Translate value="Org.addToYourWebsite" />
+                  </Button>
+                  <Button
+                    type="button"
+                  >
+                    <TiMessages />
                     <Translate value="Org.createRoom" />
                   </Button>
-                ) : null}
-                {!isAuth ? <Login /> : null}
-              </Actions>
+                </Actions>
+              ) : null}
             </Info>
             {isUser && isActive ? <Rooms org={slug} /> : null}
             {isUser && !isActive ? (
@@ -218,6 +240,11 @@ class Org extends PureComponent {
             {isAuth && !isUser ? (
               <div>
                 <a>Request approval</a>
+              </div>
+            ) : null}
+            {!isAuth ? (
+              <div>
+                <Login />
               </div>
             ) : null}
           </Grid>

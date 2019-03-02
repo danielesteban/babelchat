@@ -36,7 +36,7 @@ const Heading = styled.div`
   align-items: center;
   justify-content: center;
   background: #222;
-  height: 250px;
+  height: 300px;
   > h2 {
     color: #fff;
     font-size: 3em;

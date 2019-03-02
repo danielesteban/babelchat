@@ -28,6 +28,18 @@ export function fetchRooms() {
   };
 }
 
+export function fetchUsers() {
+  return (dispatch, getState) => {
+    const { org: { id } } = getState();
+    return dispatch({
+      type: types.ORG_FETCH_USERS,
+      payload: API.fetch({
+        endpoint: `users/${id}`,
+      }),
+    });
+  };
+}
+
 export function removeRoom(slug) {
   return (dispatch, getState) => {
     const { org: { id: org } } = getState();
