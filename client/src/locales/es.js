@@ -4,6 +4,12 @@ export default {
     goBack: 'Volver al inicio',
   },
   Room: {
+    Create: {
+      title: 'Crear una sala',
+      flag: 'Bandera',
+      name: 'Nombre',
+      submit: 'Crear sala',
+    },
     joining: 'Entrando en la sala...',
     welcome: 'Bienvenido a: "%{name}"',
   },

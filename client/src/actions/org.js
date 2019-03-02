@@ -1,6 +1,26 @@
 import API from '@/services/api';
 import * as types from './types';
 
+export function createRoom({ flag, name, peerLimit }) {
+  return (dispatch, getState) => {
+    const { org: { id } } = getState();
+    return dispatch({
+      type: types.ORG_CREATE_ROOM,
+      payload: API.fetch({
+        body: { flag, name, peerLimit },
+        endpoint: `rooms/${id}`,
+        method: 'PUT',
+      }),
+    });
+  };
+}
+
+export function hideCreateRoom() {
+  return {
+    type: types.ORG_HIDE_CREATE_ROOM,
+  };
+}
+
 export function hideSignup() {
   return {
     type: types.ORG_HIDE_SIGNUP,
@@ -106,6 +126,12 @@ export function signup({ name }) {
       endpoint: 'org',
       method: 'PUT',
     }),
+  };
+}
+
+export function showCreateRoom() {
+  return {
+    type: types.ORG_SHOW_CREATE_ROOM,
   };
 }
 

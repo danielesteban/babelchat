@@ -3,7 +3,6 @@ import React, { PureComponent } from 'react';
 import {
   TiGroup,
   TiMessages,
-  TiPipette,
   TiUpload,
 } from 'react-icons/ti';
 import { connect } from 'react-redux';
@@ -13,9 +12,11 @@ import {
   fetch,
   requestAccess,
   reset,
+  showCreateRoom,
   showUsers,
   updateImage,
 } from '@/actions/org';
+import CreateRoom from '@/components/org/createRoom';
 import Rooms from '@/components/org/rooms';
 import Users from '@/components/org/users';
 import Button from '@/components/ui/button';
@@ -110,6 +111,7 @@ const Actions = styled.div`
       line-height: 1em;
       transition: background-color ease-out .2s;
       will-change: background-color;
+      transform: translate(25%, 0);
     }
     &:hover .count {
       background-color: #111;
@@ -203,6 +205,7 @@ class Org extends PureComponent {
       match: { params: { slug } },
       name,
       pendingRequests,
+      showCreateRoom,
       showUsers,
     } = this.props;
     if (!hasLoaded) {
@@ -229,12 +232,6 @@ class Org extends PureComponent {
             <Actions>
               <Button
                 type="button"
-              >
-                <TiMessages />
-                <Translate value="Org.Nav.createRoom" />
-              </Button>
-              <Button
-                type="button"
                 onClick={showUsers}
               >
                 <TiGroup />
@@ -245,9 +242,10 @@ class Org extends PureComponent {
               </Button>
               <Button
                 type="button"
+                onClick={showCreateRoom}
               >
-                <TiPipette />
-                <Translate value="Org.Nav.customize" />
+                <TiMessages />
+                <Translate value="Org.Nav.createRoom" />
               </Button>
             </Actions>
           ) : null}
@@ -263,8 +261,9 @@ class Org extends PureComponent {
               </Button>
             ) : null}
           </Cover>
-          {isUser && isActive ? <Rooms org={slug} /> : null}
-          {isAdmin ? <Users /> : null}
+          {isUser && isActive ? (
+            <Rooms org={slug} />
+          ) : null}
           {isUser && !isActive ? (
             <Section>
               <p>
@@ -293,6 +292,12 @@ class Org extends PureComponent {
               <Login />
             </Section>
           ) : null}
+          {isAdmin ? (
+            <div>
+              <CreateRoom />
+              <Users />
+            </div>
+          ) : null}
         </Content>
       </Layout>
     );
@@ -319,6 +324,7 @@ Org.propTypes = {
   fetch: PropTypes.func.isRequired,
   requestAccess: PropTypes.func.isRequired,
   reset: PropTypes.func.isRequired,
+  showCreateRoom: PropTypes.func.isRequired,
   showUsers: PropTypes.func.isRequired,
   updateImage: PropTypes.func.isRequired,
 };
@@ -351,6 +357,7 @@ export default connect(
     fetch,
     requestAccess,
     reset,
+    showCreateRoom,
     showUsers,
     updateImage,
   }

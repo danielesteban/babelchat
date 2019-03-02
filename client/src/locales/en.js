@@ -4,6 +4,12 @@ export default {
     goBack: 'Take me back home',
   },
   Room: {
+    Create: {
+      title: 'Create a room',
+      flag: 'Flag',
+      name: 'Name',
+      submit: 'Create room',
+    },
     joining: 'Joining room...',
     welcome: 'Welcome to: "%{name}"',
   },

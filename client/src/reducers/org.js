@@ -57,6 +57,22 @@ const isAdmin = (
   }
 };
 
+const isShowingCreateRoom = (
+  state = false,
+  action
+) => {
+  switch (action.type) {
+    case types.ORG_SHOW_CREATE_ROOM:
+      return true;
+    case types.ORG_CREATE_ROOM_FULFILLED:
+    case types.ORG_HIDE_CREATE_ROOM:
+    case types.ORG_RESET:
+      return false;
+    default:
+      return state;
+  }
+};
+
 const isShowingUsers = (
   state = false,
   action
@@ -141,6 +157,11 @@ const rooms = (
   switch (action.type) {
     case types.ORG_FETCH_ROOMS_FULFILLED:
       return action.payload.sort(({ name: a }, { name: b }) => a.localeCompare(b));
+    case types.ORG_CREATE_ROOM_FULFILLED:
+      return [
+        ...state,
+        action.payload,
+      ].sort(({ name: a }, { name: b }) => a.localeCompare(b));
     case types.ORG_REMOVE_ROOM_FULFILLED:
       return state.filter(({ slug }) => (slug !== action.payload.slug));
     case types.ORG_RESET:
@@ -182,6 +203,7 @@ const orgReducer = combineReducers({
   id,
   isActive,
   isAdmin,
+  isShowingCreateRoom,
   isShowingUsers,
   isSigningup,
   isUser,

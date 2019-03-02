@@ -285,6 +285,48 @@ module.exports = (api) => {
 
   /**
    * @swagger
+   * /rooms/{org}:
+   *   put:
+   *     description: Create a room
+   *     tags: [Room]
+   *     parameters:
+   *       - name: org
+   *         in: path
+   *         description: Org id
+   *         required: true
+   *         schema:
+   *           type: string
+   *     requestBody:
+   *      required: true
+   *      content:
+   *        application/json:
+   *          schema:
+   *            type: object
+   *            properties:
+   *              flag:
+   *                type: string
+   *                description: Room flag
+   *              name:
+   *                type: string
+   *                description: Room name
+   *              peerLimit:
+   *                type: string
+   *                description: Room peer limit
+   *     responses:
+   *       200:
+   *         description: New org slug
+   *       401:
+   *         description: Invalid/expired session token
+   */
+  api.put(
+    '/rooms/:org',
+    preventCache,
+    requireAuth,
+    room.create
+  );
+
+  /**
+   * @swagger
    * /room/{org}/{slug}:
    *   delete:
    *     description: Delete a room

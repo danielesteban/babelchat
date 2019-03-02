@@ -1,8 +1,55 @@
 const { unauthorized } = require('boom');
-const { param } = require('express-validator/check');
+const { body, param } = require('express-validator/check');
 const { Org, OrgUser, Room } = require('../models');
 const Rooms = require('../services/rooms');
 const { checkValidationResult } = require('../services/errorHandler');
+
+module.exports.create = [
+  param('org')
+    .isMongoId(),
+  body('flag')
+    .not().isEmpty()
+    .isLength({ min: 1, max: 2 })
+    .trim(),
+  body('name')
+    .not().isEmpty()
+    .isLength({ min: 1, max: 25 })
+    .trim(),
+  body('peerLimit')
+    .optional()
+    .isInt()
+    .toInt(),
+  checkValidationResult,
+  (req, res, next) => {
+    const { flag, name, peerLimit } = req.body;
+    const { org } = req.params;
+    return OrgUser
+      .isOrgAdmin({
+        user: req.user._id,
+        org,
+      })
+      .then(() => {
+        const room = new Room({
+          flag,
+          name,
+          org,
+          peerLimit: peerLimit ? Math.min(Math.max(peerLimit, 0), 8) : undefined,
+        });
+        return room
+          .save();
+      })
+      .then(room => (
+        res.json({
+          flag: room.flag,
+          name: room.name,
+          peerLimit: room.peerLimit,
+          peers: 0,
+          slug: room.slug,
+        })
+      ))
+      .catch(next);
+  },
+];
 
 module.exports.list = [
   param('org')
