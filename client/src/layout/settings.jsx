@@ -29,13 +29,16 @@ class Settings extends PureComponent {
   }
 
   onSubmit(e) {
-    const { hide, save } = this.props;
+    const { hide, isStreaming, save } = this.props;
     e.preventDefault();
     const { target: form } = e;
     const audioInput = form.audioInput.value;
     const videoInput = form.videoInput.value;
     save({ audioInput, videoInput });
     hide();
+    if (isStreaming) {
+      window.location.reload();
+    }
   }
 
   render() {
@@ -88,6 +91,7 @@ class Settings extends PureComponent {
 }
 
 Settings.propTypes = {
+  isStreaming: PropTypes.bool.isRequired,
   settings: PropTypes.shape({
     audioInput: PropTypes.string.isRequired,
     videoInput: PropTypes.string.isRequired,
@@ -98,8 +102,9 @@ Settings.propTypes = {
 
 export default connect(
   ({
-    user: { settings },
+    user: { settings, stream },
   }) => ({
+    isStreaming: !!stream,
     settings,
   }),
   {

@@ -131,6 +131,7 @@ const Cover = styled.div`
   background: #000;
   background-repeat: no-repeat;
   background-size: cover;
+  background-position: center;
   background-image: url(${props => props.cover});
   width: 100%;
   height: 312px;
