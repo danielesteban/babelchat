@@ -21,10 +21,11 @@ class CreateRoom extends PureComponent {
     e.preventDefault();
     const flag = form.flag.value;
     const name = form.name.value;
-    if (!flag || !name) {
+    const peerLimit = parseInt(form.peerLimit.value, 10);
+    if (!flag || !name || !peerLimit) {
       return;
     }
-    createRoom({ flag, name });
+    createRoom({ flag, name, peerLimit });
   }
 
   render() {
@@ -51,6 +52,10 @@ class CreateRoom extends PureComponent {
                 </option>
               ))}
             </select>
+          </div>
+          <div>
+            <label><Translate value="Room.Create.peerLimit" /></label>
+            <input type="number" name="peerLimit" min="2" max="8" defaultValue="8" />
           </div>
           <div className="submit">
             <Button

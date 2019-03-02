@@ -8,6 +8,7 @@ export default {
       title: 'Create a room',
       flag: 'Flag',
       name: 'Name',
+      peerLimit: 'Peer limit',
       submit: 'Create room',
     },
     joining: 'Joining room...',

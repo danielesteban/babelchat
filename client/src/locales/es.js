@@ -8,6 +8,7 @@ export default {
       title: 'Crear una sala',
       flag: 'Bandera',
       name: 'Nombre',
+      peerLimit: 'Límite de parcipantes',
       submit: 'Crear sala',
     },
     joining: 'Entrando en la sala...',

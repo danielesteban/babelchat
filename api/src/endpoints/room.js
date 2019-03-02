@@ -32,7 +32,7 @@ module.exports.create = [
           flag,
           name,
           org,
-          peerLimit: peerLimit ? Math.min(Math.max(peerLimit, 0), 8) : undefined,
+          peerLimit: peerLimit ? Math.min(Math.max(peerLimit, 2), 8) : undefined,
         });
         return room
           .save();
