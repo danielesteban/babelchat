@@ -9,8 +9,7 @@ module.exports.create = [
     .isMongoId(),
   body('flag')
     .not().isEmpty()
-    .isLength({ min: 1, max: 2 })
-    .trim(),
+    .isLength({ min: 2, max: 2 }),
   body('name')
     .not().isEmpty()
     .isLength({ min: 1, max: 25 })
