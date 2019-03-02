@@ -1,8 +1,9 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto);
 body {
   margin: 0;
   background: #ddd;
   color: #000;
-  font-family: Arial, sans-serif;
+  font-family: Roboto, Arial, sans-serif;
   font-size: 0.75rem;
   line-height: 1.25rem;
   font-weight: 400;
