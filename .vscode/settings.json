@@ -1,6 +1,7 @@
 {
   "editor.tabSize": 2,
   "files.eol": "\n",
+  "debug.internalConsoleOptions": "neverOpen",
   "debug.openDebug": "neverOpen",
   "telemetry.enableTelemetry": false,
   "telemetry.enableCrashReporter": false,

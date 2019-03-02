@@ -7,7 +7,6 @@ const helmet = require('helmet');
 const mongoose = require('mongoose');
 const config = require('./config');
 const setupEndpoints = require('./endpoints');
-const { Room } = require('./models');
 const { setup: setupErrorHandler } = require('./services/errorHandler');
 const { setup: setupPassport } = require('./services/passport');
 const setupSwagger = require('./services/swagger');
@@ -16,9 +15,6 @@ const setupSwagger = require('./services/swagger');
 mongoose.set('useCreateIndex', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useNewUrlParser', true);
-mongoose.connection.once('connected', () => (
-  Room.populate()
-));
 mongoose.connection.on('error', console.error);
 mongoose.connection.on('disconnected', () => mongoose.connect(config.mongoURI));
 mongoose.connect(config.mongoURI);

@@ -10,16 +10,17 @@ const Route = styled.div`
 `;
 
 const loadingBarStyle = {
-  backgroundColor: '#bebebe',
+  backgroundColor: '#393',
+  zIndex: 1,
 };
 
 const Layout = ({ children }) => (
   <div>
     <LoadingBar style={loadingBarStyle} />
-    <User />
     <Route>
       { children }
     </Route>
+    <User />
   </div>
 );
 

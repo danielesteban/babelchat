@@ -205,7 +205,15 @@ module.exports = (room) => {
   if (typeof room === 'string') {
     return rooms[room];
   }
-  const { slug } = room;
-  rooms[slug] = new Room(room);
-  return rooms[slug];
+  const { key } = room;
+  rooms[key] = new Room(room);
+  return rooms[key];
+};
+
+module.exports.remove = (room) => {
+  if (rooms[room]) {
+    rooms[room].peers
+      .forEach(peer => peer.close());
+    delete rooms[room];
+  }
 };

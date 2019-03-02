@@ -1,18 +1,16 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
+import { TiTrash } from 'react-icons/ti';
 import { connect } from 'react-redux';
 import { Translate } from 'react-redux-i18n';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { fetch } from '@/actions/rooms';
+import { fetchRooms as fetch, removeRoom } from '@/actions/org';
 
 const Listing = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 512px;
-  margin: 0 auto;
-  background: #fff;
   > a {
     display: flex;
     box-sizing: border-box;
@@ -20,9 +18,14 @@ const Listing = styled.div`
     align-items: center;
     justify-content: space-between;
     font-size: 1.5em;
-    padding: 0.5rem 1rem;
+    padding: 1rem;
     color: #000;
     text-decoration: none;
+    transition: color ease-out .15s, background-color ease-out .15s;
+    will-change: color, background-color;
+    &:nth-child(even) {
+      background: #ddd;
+    }
     &.full {
       opacity: 0.5;
       pointer-events: none;
@@ -34,15 +37,22 @@ const Listing = styled.div`
       vertical-align: middle;
     }
     &:hover {
-      background: #bbb;
+      color: #eee;
+      background-color: #393;
     }
   }
-  > h1 {
-    box-sizing: border-box;
-    width: 100%;
-    margin: 0 0 1rem;
-    padding: 1rem;
-    border-bottom: 1px solid #aaa;
+  &.admin > a {
+    > svg {
+      display: none;
+    }
+    &:hover {
+      > span {
+        display: none;
+      }
+      > svg {
+        display: block;
+      }
+    }
   }
 `;
 
@@ -52,11 +62,16 @@ class Rooms extends PureComponent {
     fetch();
   }
 
+  onRemove(e, slug) {
+    const { removeRoom } = this.props;
+    e.preventDefault();
+    removeRoom(slug);
+  }
+
   render() {
-    const { list } = this.props;
+    const { isAdmin, list, org } = this.props;
     return (
-      <Listing>
-        <h1>Rooms</h1>
+      <Listing className={isAdmin ? 'admin' : null}>
         {list.map(({
           flag,
           name,
@@ -66,7 +81,7 @@ class Rooms extends PureComponent {
         }) => (
           <Link
             key={slug}
-            to={{ pathname: `/${slug}` }}
+            to={{ pathname: `/${org}/${slug}` }}
             className={peers >= peerLimit ? 'full' : ''}
           >
             <strong>
@@ -80,6 +95,11 @@ class Rooms extends PureComponent {
               limit={peerLimit}
               value="Rooms.peers"
             />
+            {isAdmin ? (
+              <TiTrash
+                onClick={e => this.onRemove(e, slug)}
+              />
+            ) : null}
           </Link>
         ))}
       </Listing>
@@ -88,6 +108,7 @@ class Rooms extends PureComponent {
 }
 
 Rooms.propTypes = {
+  isAdmin: PropTypes.bool.isRequired,
   list: PropTypes.arrayOf(PropTypes.shape({
     flag: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
@@ -95,16 +116,23 @@ Rooms.propTypes = {
     peers: PropTypes.number.isRequired,
     slug: PropTypes.string.isRequired,
   })).isRequired,
+  org: PropTypes.string.isRequired,
   fetch: PropTypes.func.isRequired,
+  removeRoom: PropTypes.func.isRequired,
 };
 
 export default connect(
   ({
-    rooms: { list },
+    org: {
+      isAdmin,
+      rooms: list,
+    },
   }) => ({
+    isAdmin,
     list,
   }),
   {
     fetch,
+    removeRoom,
   }
 )(Rooms);

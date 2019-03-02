@@ -3,10 +3,10 @@ import { hot } from 'react-hot-loader';
 import { connect } from 'react-redux';
 import { Route as RouteComponent, Redirect, Switch } from 'react-router-dom';
 import Layout from '@/layout';
-import Room from './room';
-import Rooms from './rooms';
-import Login from './login';
+import Landing from './landing';
 import NotFound from './404';
+import Org from './org';
+import Room from './room';
 
 const Route = connect(
   ({ user: { isAuth } }) => ({ isAuth })
@@ -26,7 +26,7 @@ const Route = connect(
       {...rest}
       render={props => (
         (isForbidden) ? (
-          <Redirect to={isAuth ? '/' : '/login'} />
+          <Redirect to="/" />
         ) : (
           <Component {...props} />
         )
@@ -38,11 +38,10 @@ const Route = connect(
 const Root = () => (
   <Layout>
     <Switch>
+      <Route exact path="/" component={Landing} />
       <Route exact path="/404" component={NotFound} />
-      <Route exact path="/login" component={Login} requiresNoAuth />
-      <Route exact path="/rooms" component={Rooms} requiresAuth />
-      <Route exact path="/:slug" component={Room} requiresAuth />
-      <Redirect exact from="/" to="/rooms" />
+      <Route exact path="/:org/:slug" component={Room} requiresAuth />
+      <Route exact path="/:slug" component={Org} />
       <Route path="*" component={NotFound} />
     </Switch>
   </Layout>

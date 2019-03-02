@@ -2,7 +2,7 @@ const { notFound } = require('boom');
 const { param } = require('express-validator/check');
 const passport = require('passport');
 const config = require('../config');
-const { User } = require('../models');
+const { OrgUser, User } = require('../models');
 const { checkValidationResult } = require('../services/errorHandler');
 
 module.exports.authenticateWithGoogle = (req, res) => {
@@ -60,6 +60,25 @@ module.exports.getPhoto = [
       .catch(next);
   },
 ];
+
+module.exports.listOrgs = (req, res, next) => {
+  OrgUser
+    .find({
+      active: true,
+      user: req.user._id,
+    })
+    .select('org')
+    .populate('org', '-_id name slug')
+    .then(orgs => (
+      res.json(
+        orgs.map(({ org: { name, slug } }) => ({
+          name,
+          slug,
+        }))
+      )
+    ))
+    .catch(next);
+};
 
 module.exports.loginWithGoogle = (
   passport.authenticate('google', {

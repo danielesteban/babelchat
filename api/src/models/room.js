@@ -1,11 +1,16 @@
 const mongoose = require('mongoose');
 const URLSlugs = require('mongoose-url-slugs');
-const config = require('../config');
 
 const RoomSchema = new mongoose.Schema({
   flag: { type: String, required: true },
   name: { type: String, required: true },
-  peerLimit: { type: Number, default: 16 },
+  org: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Org',
+    index: true,
+    required: true,
+  },
+  peerLimit: { type: Number, default: 8 },
   photos: [{
     creator: {
       type: mongoose.Schema.Types.ObjectId,
@@ -20,27 +25,7 @@ const RoomSchema = new mongoose.Schema({
   }],
 }, { timestamps: true });
 
-RoomSchema.plugin(URLSlugs('name'));
-
-RoomSchema.statics = {
-  populate() {
-    const Room = this;
-    Room.find().countDocuments().then((count) => {
-      if (count > 0) {
-        return;
-      }
-      Promise.all(
-        config.defaultRooms.map(({
-          flag,
-          name,
-          peerLimit,
-        }) => {
-          const room = new Room({ flag, name, peerLimit });
-          return room.save();
-        })
-      );
-    });
-  },
-};
+RoomSchema.plugin(URLSlugs('name', { index: false, indexUnique: false }));
+RoomSchema.index({ slug: true, org: true, unique: true });
 
 module.exports = mongoose.model('Room', RoomSchema);

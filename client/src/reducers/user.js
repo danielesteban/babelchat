@@ -53,6 +53,20 @@ const isShowingSettings = (
   }
 };
 
+const orgs = (
+  state = [],
+  action
+) => {
+  switch (action.type) {
+    case types.USER_FETCH_ORGS_FULFILLED:
+      return action.payload.sort(({ name: a }, { name: b }) => a.localeCompare(b));
+    case types.USER_SIGNOUT:
+      return [];
+    default:
+      return state;
+  }
+};
+
 const profile = (
   state = storedSession ? storedSession.profile : {},
   action
@@ -162,6 +176,7 @@ const userReducer = combineReducers({
   isAudioMuted,
   isAuth,
   isShowingSettings,
+  orgs,
   profile,
   settings,
   stream,
