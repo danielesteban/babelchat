@@ -82,7 +82,14 @@ const Logo = styled.div`
 const Name = styled.div`
   width: 100%;
   font-size: 1.666em;
-  padding: 1rem 0 1.5rem;
+  padding: 1rem 0 0.5rem;
+`;
+
+const Url = styled.div`
+  width: 100%;
+  padding: 0 0 1.5rem;
+  color: #aaa;
+  user-select: all;
 `;
 
 const Actions = styled.div`
@@ -228,6 +235,9 @@ class Org extends PureComponent {
           <Name>
             { name }
           </Name>
+          <Url>
+            {`${__DOMAIN__}${__BASENAME__}${slug}`}
+          </Url>
           {isAdmin ? (
             <Actions>
               <Button

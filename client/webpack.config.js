@@ -169,6 +169,7 @@ module.exports = {
       __API__: JSON.stringify(api),
       __BASENAME__: JSON.stringify(basename),
       __COUNTRY_FLAGS_CDN__: JSON.stringify(countryFlagsCDN),
+      __DOMAIN__: JSON.stringify(domain),
       __PRODUCTION__: JSON.stringify(mode === 'production'),
       __VERSION__: JSON.stringify(version),
     }),

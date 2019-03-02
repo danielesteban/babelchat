@@ -6,6 +6,7 @@ module.exports = {
   globals: {
     __API__: '',
     __BASENAME__: '',
+    __DOMAIN__: '',
     __COUNTRY_FLAGS_CDN__: '',
     __PRODUCTION__: false,
     __VERSION__: '',
