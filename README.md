@@ -3,6 +3,8 @@
 
 > Language Exchange OpenSource Platform
 
+[![Build Status](https://travis-ci.org/danielesteban/babelchat.svg?branch=master)](https://travis-ci.org/danielesteban/babelchat)
+
 #### Dev environment
 
  * git clone https://github.com/danielesteban/babelchat.git
