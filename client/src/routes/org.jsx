@@ -247,7 +247,7 @@ class Org extends PureComponent {
                 type="button"
               >
                 <TiPipette />
-                <Translate value="Org.Nav.customizePalette" />
+                <Translate value="Org.Nav.customize" />
               </Button>
             </Actions>
           ) : null}

@@ -13,8 +13,8 @@ export default {
   Org: {
     Nav: {
       createRoom: 'Create room',
+      customize: 'Customize',
       manageUsers: 'Manage students',
-      customizePalette: 'Customize palette',
     },
     CTA: {
       copy: 'Are you an academy manager/teacher?',
