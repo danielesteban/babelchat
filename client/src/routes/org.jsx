@@ -82,7 +82,7 @@ const Logo = styled.div`
 const Name = styled.div`
   width: 100%;
   font-size: 1.666em;
-  padding: 1rem 0;
+  padding: 1rem 0 1.5rem;
 `;
 
 const Actions = styled.div`
