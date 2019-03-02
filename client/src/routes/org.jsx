@@ -13,9 +13,11 @@ import {
   fetch,
   requestAccess,
   reset,
+  showUsers,
   updateImage,
 } from '@/actions/org';
 import Rooms from '@/components/org/rooms';
+import Users from '@/components/org/users';
 import Button from '@/components/ui/button';
 import Login from '@/components/ui/login';
 import Page from '@/components/ui/page';
@@ -94,6 +96,23 @@ const Actions = styled.div`
     > svg {
       font-size: 1.5em;
       margin-right: 0.25rem;
+    }
+    .count {
+      display: flex;
+      margin-left: auto;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      background-color: #393;
+      border-radius: 9px;
+      font-size: 0.85em;
+      line-height: 1em;
+      transition: background-color ease-out .2s;
+      will-change: background-color;
+    }
+    &:hover .count {
+      background-color: #111;
     }
   }
 `;
@@ -183,6 +202,8 @@ class Org extends PureComponent {
       requestAccess,
       match: { params: { slug } },
       name,
+      pendingRequests,
+      showUsers,
     } = this.props;
     if (!hasLoaded) {
       return null;
@@ -214,9 +235,13 @@ class Org extends PureComponent {
               </Button>
               <Button
                 type="button"
+                onClick={showUsers}
               >
                 <TiGroup />
                 <Translate value="Org.Nav.manageUsers" />
+                {pendingRequests > 0 ? (
+                  <span className="count">{pendingRequests}</span>
+                ) : null}
               </Button>
               <Button
                 type="button"
@@ -239,6 +264,7 @@ class Org extends PureComponent {
             ) : null}
           </Cover>
           {isUser && isActive ? <Rooms org={slug} /> : null}
+          {isAdmin ? <Users /> : null}
           {isUser && !isActive ? (
             <Section>
               <p>
@@ -289,9 +315,11 @@ Org.propTypes = {
   isAuth: PropTypes.bool.isRequired,
   isUser: PropTypes.bool.isRequired,
   name: PropTypes.string.isRequired,
+  pendingRequests: PropTypes.number.isRequired,
   fetch: PropTypes.func.isRequired,
   requestAccess: PropTypes.func.isRequired,
   reset: PropTypes.func.isRequired,
+  showUsers: PropTypes.func.isRequired,
   updateImage: PropTypes.func.isRequired,
 };
 
@@ -304,6 +332,7 @@ export default connect(
       isAdmin,
       isUser,
       name,
+      pendingRequests,
     },
     user: {
       isAuth,
@@ -316,11 +345,13 @@ export default connect(
     isAuth,
     isUser,
     name,
+    pendingRequests,
   }),
   {
     fetch,
     requestAccess,
     reset,
+    showUsers,
     updateImage,
   }
 )(Org);

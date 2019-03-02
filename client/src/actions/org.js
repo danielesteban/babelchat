@@ -7,6 +7,12 @@ export function hideSignup() {
   };
 }
 
+export function hideUsers() {
+  return {
+    type: types.ORG_HIDE_USERS,
+  };
+}
+
 export function fetch(slug) {
   return {
     type: types.ORG_FETCH,
@@ -54,6 +60,23 @@ export function removeRoom(slug) {
   };
 }
 
+export function resolveRequest({ id, resolution }) {
+  return (dispatch, getState) => {
+    const { org: { id: org } } = getState();
+    return dispatch({
+      type: types.ORG_RESOLVE_REQUEST,
+      payload: API.fetch({
+        endpoint: `user/${org}/${id}/${resolution}`,
+        method: 'POST',
+      })
+        .then(() => ({
+          id,
+          resolution,
+        })),
+    });
+  };
+}
+
 export function requestAccess() {
   return (dispatch, getState) => {
     const { org: { id } } = getState();
@@ -89,6 +112,12 @@ export function signup({ name }) {
 export function showSignup() {
   return {
     type: types.ORG_SHOW_SIGNUP,
+  };
+}
+
+export function showUsers() {
+  return {
+    type: types.ORG_SHOW_USERS,
   };
 }
 

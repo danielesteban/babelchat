@@ -13,12 +13,16 @@ export default {
   Org: {
     Nav: {
       createRoom: 'Create room',
-      manageUsers: 'Manage Users',
-      customizePalette: 'Customize Palette',
+      manageUsers: 'Manage students',
+      customizePalette: 'Customize palette',
     },
     CTA: {
       copy: 'Are you an academy manager/teacher?',
       button: 'Try it now',
+    },
+    Request: {
+      approve: 'Approve',
+      decline: 'Decline',
     },
     Signup: {
       title: 'Create an account',

@@ -57,6 +57,21 @@ const isAdmin = (
   }
 };
 
+const isShowingUsers = (
+  state = false,
+  action
+) => {
+  switch (action.type) {
+    case types.ORG_SHOW_USERS:
+      return true;
+    case types.ORG_HIDE_USERS:
+    case types.ORG_RESET:
+      return false;
+    default:
+      return state;
+  }
+};
+
 const isSigningup = (
   state = false,
   action
@@ -101,6 +116,24 @@ const name = (
   }
 };
 
+const pendingRequests = (
+  state = 0,
+  action
+) => {
+  switch (action.type) {
+    case types.ORG_FETCH_USERS_FULFILLED:
+      return action.payload.reduce((count, { isRequest }) => (
+        count + (isRequest ? 1 : 0)
+      ), 0);
+    case types.ORG_RESOLVE_REQUEST_FULFILLED:
+      return state - 1;
+    case types.ORG_RESET:
+      return 0;
+    default:
+      return state;
+  }
+};
+
 const rooms = (
   state = [],
   action
@@ -117,15 +150,45 @@ const rooms = (
   }
 };
 
+const users = (
+  state = [],
+  action
+) => {
+  switch (action.type) {
+    case types.ORG_FETCH_USERS_FULFILLED:
+      return action.payload.sort(({ name: a }, { name: b }) => a.localeCompare(b));
+    case types.ORG_RESOLVE_REQUEST_FULFILLED:
+      if (action.payload.resolution === 'approve') {
+        return state.map((user) => {
+          if (user._id === action.payload.id) {
+            return {
+              ...user,
+              isRequest: undefined,
+            };
+          }
+          return user;
+        });
+      }
+      return state.filter(({ _id }) => (_id !== action.payload.id));
+    case types.ORG_RESET:
+      return [];
+    default:
+      return state;
+  }
+};
+
 const orgReducer = combineReducers({
   hasLoaded,
   id,
   isActive,
   isAdmin,
+  isShowingUsers,
   isSigningup,
   isUser,
   name,
+  pendingRequests,
   rooms,
+  users,
 });
 
 export default orgReducer;

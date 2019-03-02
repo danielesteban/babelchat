@@ -203,9 +203,9 @@ module.exports = (api) => {
 
   /**
    * @swagger
-   * /user/{org}/{id}:
+   * /user/{org}/{id}/{resolution}:
    *   post:
-   *     description: Update org user
+   *     description: Resolve user access request
    *     tags: [OrgUser]
    *     parameters:
    *       - name: id
@@ -220,29 +220,25 @@ module.exports = (api) => {
    *         required: true
    *         schema:
    *           type: string
-   *     requestBody:
-   *       required: true
-   *       content:
-   *         multipart/form-data:
-   *           schema:
-   *             type: object
-   *             properties:
-   *               active:
-   *                 type: boolean
-   *                 description: Account status
+   *       - name: resolution
+   *         in: path
+   *         description: approve or decline
+   *         required: true
+   *         schema:
+   *           type: string
    *     responses:
    *       200:
-   *         description: Successfully updated
+   *         description: Successfully resolved
    *       404:
    *         description: User not found
    *       401:
    *         description: Invalid/expired session token
    */
   api.post(
-    '/user/:org/:id',
+    '/user/:org/:id/:resolution(approve|decline)',
     preventCache,
     requireAuth,
-    org.updateUser
+    org.resolveAccessRequest
   );
 
   /**

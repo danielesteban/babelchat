@@ -189,13 +189,13 @@ module.exports.getUsers = [
             admin: false,
             org,
           })
-          .select('active user')
+          .select('-_id active user')
           .populate('user', 'name')
       ))
       .then(users => (
         res.json(users.map(({ active, user }) => ({
-          ...user,
-          isActive: active || undefined,
+          ...user._doc,
+          isRequest: !active || undefined,
         })))
       ))
       .catch(next);
@@ -268,18 +268,16 @@ module.exports.updateImage = [
   },
 ];
 
-module.exports.updateUser = [
+module.exports.resolveAccessRequest = [
   param('org')
     .isMongoId(),
   param('id')
     .isMongoId(),
-  body('active')
-    .isBoolean()
-    .toBoolean(),
+  param('resolution')
+    .isIn(['approve', 'decline']),
   checkValidationResult,
   (req, res, next) => {
-    const { active } = req.body;
-    const { id, org } = req.params;
+    const { id, org, resolution } = req.params;
     return OrgUser
       .isOrgAdmin({
         user: req.user._id,
@@ -288,6 +286,7 @@ module.exports.updateUser = [
       .then(() => (
         OrgUser
           .findOne({
+            active: false,
             org,
             user: id,
           })
@@ -295,9 +294,16 @@ module.exports.updateUser = [
             if (!user) {
               throw notFound();
             }
-            user.active = active;
-            return user
-              .save();
+            if (resolution === 'approve') {
+              user.active = true;
+              return user
+                .save();
+            }
+            return OrgUser
+              .deleteOne({
+                org,
+                user: id,
+              });
           })
       ))
       .then(() => (

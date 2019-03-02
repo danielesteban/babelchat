@@ -9,8 +9,8 @@ import {
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { showSettings, signout, toggleAudio } from '@/actions/user';
-import API from '@/services/api';
 import Video from '@/components/room/video';
+import API from '@/services/api';
 import Settings from './settings';
 
 const Wrapper = styled.div`

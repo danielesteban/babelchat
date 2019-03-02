@@ -14,13 +14,13 @@ export default styled.button`
   font-family: inherit;
   font-size: inherit;
   font-weight: 700;
-  transition: background-color ease-out .2s, opacity ease-out .2s;
-  will-change: background-color, opacity;
+  transition: background-color ease-out .2s;
+  will-change: background-color;
   cursor: pointer;
   > span {
     margin-left: 0.5rem;
   }
   &:hover {
-    background-color: ${props => (props.primary ? '#111' : '#393')};
+    background-color: #393;
   }
 `;

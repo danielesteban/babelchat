@@ -19,7 +19,7 @@ const Wrapper = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -75%);
-  width: 400px;
+  width: ${props => props.width};
   display: flex;
   flex-direction: column;
   border-radius: 2px;
@@ -52,9 +52,14 @@ const Content = styled.div`
   border-radius: 0 0 2px 2px;
 `;
 
-const Dialog = ({ children, hide, title }) => (
+const Dialog = ({
+  children,
+  title,
+  width,
+  hide,
+}) => (
   <Overlay>
-    <Wrapper>
+    <Wrapper width={width}>
       <Heading>
         <Translate value={title} />
         <a
@@ -70,9 +75,14 @@ const Dialog = ({ children, hide, title }) => (
   </Overlay>
 );
 
+Dialog.defaultProps = {
+  width: '400px',
+};
+
 Dialog.propTypes = {
   children: PropTypes.node.isRequired,
   title: PropTypes.string.isRequired,
+  width: PropTypes.string,
   hide: PropTypes.func.isRequired,
 };
 
