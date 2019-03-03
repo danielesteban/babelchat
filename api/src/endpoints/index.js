@@ -49,7 +49,7 @@ module.exports = (api) => {
    * @swagger
    * /org/{slug}:
    *   get:
-   *     description: Get an organization public data
+   *     description: Get org public data
    *     tags: [Org]
    *     security: []
    *     parameters:
@@ -64,12 +64,80 @@ module.exports = (api) => {
    *         description: Org data
    *       401:
    *         description: Invalid/expired session token
+   *       404:
+   *         description: Org not found
    */
   api.get(
     '/org/:slug',
     preventCache,
     authenticate,
     org.get
+  );
+
+  /**
+   * @swagger
+   * /org/{org}:
+   *   post:
+   *     description: Update org data
+   *     tags: [Org]
+   *     parameters:
+   *       - name: org
+   *         in: path
+   *         description: Org id
+   *         required: true
+   *         schema:
+   *           type: string
+   *     requestBody:
+   *      required: true
+   *      content:
+   *        application/json:
+   *          schema:
+   *            type: object
+   *            properties:
+   *              name:
+   *                type: string
+   *                description: Org name
+   *     responses:
+   *       200:
+   *         description: Successfully removed
+   *       401:
+   *         description: Invalid/expired session token
+   *       404:
+   *         description: Org not found
+   */
+  api.post(
+    '/org/:org',
+    preventCache,
+    requireAuth,
+    requireOrgUser({ admin: true }),
+    org.update
+  );
+
+  /**
+   * @swagger
+   * /org/{org}:
+   *   delete:
+   *     description: Remove an organization
+   *     tags: [Org]
+   *     parameters:
+   *       - name: org
+   *         in: path
+   *         description: Org id
+   *         required: true
+   *         schema:
+   *           type: string
+   *     responses:
+   *       200:
+   *         description: Successfully removed
+   *       401:
+   *         description: Invalid/expired session token
+   */
+  api.delete(
+    '/org/:org',
+    preventCache,
+    requireAuth,
+    requireOrgUser({ admin: true }),
+    org.remove
   );
 
   /**
@@ -364,7 +432,25 @@ module.exports = (api) => {
     room.list
   );
 
-  // Room socket
+  /**
+   * @swagger
+   * /org/{org}/room/{slug}:
+   *   get:
+   *     description: Join a room (This is a WebSockets endpoint)
+   *     tags: [Room]
+   *     parameters:
+   *       - name: org
+   *         in: path
+   *         description: Org id
+   *         required: true
+   *         schema:
+   *           type: string
+   *     responses:
+   *       200:
+   *         description: Successfully joined
+   *       401:
+   *         description: Invalid/expired session token
+   */
   api.ws(
     '/org/:org/room/:slug',
     requirePeerAuth,
@@ -436,6 +522,34 @@ module.exports = (api) => {
 
   /**
    * @swagger
+   * /user/google:
+   *   get:
+   *     description: Get redirected to the google auth popup
+   *     tags: [User]
+   *     security: []
+   */
+  api.get(
+    '/user/google',
+    preventCache,
+    user.loginWithGoogle
+  );
+
+  /**
+   * @swagger
+   * /user/google/authenticate:
+   *   get:
+   *     description: Google auth callback endpoint
+   *     tags: [User]
+   *     security: []
+   */
+  api.get(
+    '/user/google/authenticate',
+    preventCache,
+    user.authenticateWithGoogle
+  );
+
+  /**
+   * @swagger
    * /user/orgs:
    *   get:
    *     description: List user orgs
@@ -478,19 +592,5 @@ module.exports = (api) => {
     '/user/:user/photo',
     requireAuth,
     user.getPhoto
-  );
-
-  // Google auth popup
-  api.get(
-    '/user/google',
-    preventCache,
-    user.loginWithGoogle
-  );
-
-  // Google auth callback
-  api.get(
-    '/user/google/authenticate',
-    preventCache,
-    user.authenticateWithGoogle
   );
 };

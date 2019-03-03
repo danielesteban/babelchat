@@ -43,8 +43,8 @@ export default {
       title: 'Settings',
       audioInput: 'Audio input',
       save: 'Save settings',
-      signIn: 'Sign-In with google',
       videoInput: 'Video input',
     },
+    signIn: 'Sign-In with google',
   },
 };

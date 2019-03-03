@@ -43,8 +43,8 @@ export default {
       title: 'Preferencias',
       audioInput: 'Entrada de audio',
       save: 'Guardar preferencias',
-      signIn: 'Iniciar Sesión con google',
       videoInput: 'Entrada de vídeo',
     },
+    signIn: 'Iniciar Sesión con google',
   },
 };

@@ -3,6 +3,7 @@ const { body, param } = require('express-validator/check');
 const config = require('../config');
 const { Org, OrgUser, Room } = require('../models');
 const { checkValidationResult } = require('../services/errorHandler');
+const Rooms = require('../services/rooms');
 
 module.exports.create = [
   body('name')
@@ -151,6 +152,40 @@ module.exports.getUsers = (req, res, next) => {
     .catch(next);
 };
 
+module.exports.remove = (req, res, next) => {
+  const { org } = req.params;
+  // Remove org users
+  return OrgUser
+    .deleteMany({ org })
+    .then(() => (
+      // Find org rooms
+      Room
+        .find({ org })
+        .select('slug')
+        .then(rooms => (
+          // Remove them from the room service
+          rooms.forEach(({ slug }) => (
+            Rooms.remove(`${org}::${slug}`)
+          ))
+        ))
+    ))
+    .then(() => (
+      // Remove org rooms
+      Room
+        .deleteMany({ org })
+    ))
+    .then(() => (
+      // Remove org
+      Org
+        .deleteOne({ _id: org })
+    ))
+    .then(() => (
+      // Success!
+      res.status(200).end()
+    ))
+    .catch(next);
+};
+
 module.exports.removeUser = [
   param('user')
     .isMongoId(),
@@ -238,6 +273,35 @@ module.exports.requestAccess = [
       })
       .then(() => (
         res.status(200).end()
+      ))
+      .catch(next);
+  },
+];
+
+module.exports.update = [
+  body('name')
+    .not().isEmpty()
+    .isLength({ min: 1, max: 25 })
+    .trim(),
+  checkValidationResult,
+  (req, res, next) => {
+    const { name } = req.body;
+    const { org } = req.params;
+    return Org
+      .findById(org)
+      .then((org) => {
+        if (!org) {
+          throw notFound();
+        }
+        org.name = name;
+        return org
+          .save();
+      })
+      .then(org => (
+        res.json({
+          name: org.name,
+          slug: org.slug,
+        })
       ))
       .catch(next);
   },
