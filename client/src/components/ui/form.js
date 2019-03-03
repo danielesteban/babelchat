@@ -22,7 +22,7 @@ export default styled.form`
       border: 1px solid #ccc;
     }
     > button {
-      margin: 1rem auto;
+      margin: 1rem auto 0;
       padding: 0.5rem 1rem;
       cursor: pointer;
     }

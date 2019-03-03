@@ -300,7 +300,6 @@ module.exports.update = [
       .then(org => (
         res.json({
           name: org.name,
-          slug: org.slug,
         })
       ))
       .catch(next);

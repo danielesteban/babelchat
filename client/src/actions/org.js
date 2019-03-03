@@ -48,6 +48,19 @@ export function fetchUsers() {
   };
 }
 
+export function remove() {
+  return (dispatch, getState) => {
+    const { org: { id } } = getState();
+    return dispatch({
+      type: types.ORG_REMOVE,
+      payload: API.fetch({
+        endpoint: `org/${id}`,
+        method: 'DELETE',
+      }),
+    });
+  };
+}
+
 export function removeRoom(slug) {
   return (dispatch, getState) => {
     const { org: { id } } = getState();
@@ -122,6 +135,20 @@ export function signup({ name }) {
       endpoint: 'orgs',
       method: 'PUT',
     }),
+  };
+}
+
+export function update({ name }) {
+  return (dispatch, getState) => {
+    const { org: { id } } = getState();
+    return dispatch({
+      type: types.ORG_UPDATE,
+      payload: API.fetch({
+        body: { name },
+        endpoint: `org/${id}`,
+        method: 'POST',
+      }),
+    });
   };
 }
 

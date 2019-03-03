@@ -24,6 +24,15 @@ export default {
       createRoom: 'Crear sala',
       customize: 'Personalizar',
       manageUsers: 'Estudiantes',
+      settings: 'Preferencias',
+    },
+    Settings: {
+      dangerZone: 'Danger zone',
+      title: 'Preferencias',
+      name: 'Nombre',
+      organization: 'Organización',
+      remove: 'Eliminar organización',
+      save: 'Guardar preferencias',
     },
     Signup: {
       title: 'Crear una cuenta',
