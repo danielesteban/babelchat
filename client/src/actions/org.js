@@ -80,6 +80,20 @@ export function removeRoom(slug) {
   };
 }
 
+export function removeUser(user) {
+  return (dispatch, getState) => {
+    const { org: { id } } = getState();
+    return dispatch({
+      type: types.ORG_REMOVE_USER,
+      payload: API.fetch({
+        endpoint: `org/${id}/user/${user}`,
+        method: 'DELETE',
+      })
+        .then(() => ({ user })),
+    });
+  };
+}
+
 export function resolveRequest({ user, resolution }) {
   return (dispatch, getState) => {
     const { org: { id } } = getState();

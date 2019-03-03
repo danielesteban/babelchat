@@ -241,6 +241,40 @@ module.exports = (api) => {
 
   /**
    * @swagger
+   * /org/{id}/user/{user}:
+   *   delete:
+   *     description: Remove org user
+   *     tags: [OrgUser]
+   *     parameters:
+   *       - name: id
+   *         in: path
+   *         description: Org id
+   *         required: true
+   *         schema:
+   *           type: string
+   *       - name: user
+   *         in: path
+   *         description: User id
+   *         required: true
+   *         schema:
+   *           type: string
+   *     responses:
+   *       200:
+   *         description: Successfully removed
+   *       404:
+   *         description: User not found
+   *       401:
+   *         description: Invalid/expired session token
+   */
+  api.delete(
+    '/org/:id/user/:user/',
+    preventCache,
+    requireAuth,
+    org.removeUser
+  );
+
+  /**
+   * @swagger
    * /org/{id}/rooms:
    *   put:
    *     description: Create a room

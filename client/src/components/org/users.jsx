@@ -1,12 +1,13 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import { TiTick, TiTimes } from 'react-icons/ti';
+import { TiTick, TiTimes, TiTrash } from 'react-icons/ti';
 import { connect } from 'react-redux';
 import { Translate } from 'react-redux-i18n';
 import styled from 'styled-components';
 import {
   fetchUsers as fetch,
   hideUsers as hide,
+  removeUser,
   resolveRequest,
 } from '@/actions/org';
 import Button from '@/components/ui/button';
@@ -41,6 +42,14 @@ const User = styled.div`
       vertical-align: middle;
     }
   }
+  > button {
+    display: none;
+    padding: 0.2rem 1rem;
+    font-size: 1.4rem;
+  }
+  &:hover > button {
+    display: flex;
+  }
 `;
 
 class Users extends PureComponent {
@@ -54,6 +63,7 @@ class Users extends PureComponent {
       list,
       isShowingUsers,
       hide,
+      removeUser,
       resolveRequest,
     } = this.props;
     if (!isShowingUsers) {
@@ -96,7 +106,14 @@ class Users extends PureComponent {
                     <Translate value="Org.Request.approve" />
                   </Button>
                 </div>
-              ) : null}
+              ) : (
+                <Button
+                  type="button"
+                  onClick={() => removeUser(_id)}
+                >
+                  <TiTrash />
+                </Button>
+              )}
             </User>
           ))}
         </Scroll>
@@ -114,6 +131,7 @@ Users.propTypes = {
   })).isRequired,
   hide: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
+  removeUser: PropTypes.func.isRequired,
   resolveRequest: PropTypes.func.isRequired,
 };
 
@@ -130,6 +148,7 @@ export default connect(
   {
     hide,
     fetch,
+    removeUser,
     resolveRequest,
   }
 )(Users);
