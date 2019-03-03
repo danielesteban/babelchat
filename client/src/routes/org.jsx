@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import {
+  TiClipboard,
   TiGroup,
   TiMessages,
   TiUpload,
@@ -86,10 +87,15 @@ const Name = styled.div`
 `;
 
 const Url = styled.div`
+  display: flex;
+  justify-content: space-between;
   width: 100%;
   padding: 0 0 1.5rem;
   color: #aaa;
   user-select: all;
+  > a {
+    font-size: 1.5em;
+  }
 `;
 
 const Actions = styled.div`
@@ -238,6 +244,11 @@ class Org extends PureComponent {
           </Name>
           <Url>
             {`${__DOMAIN__}${__BASENAME__}${slug}`}
+            {isAdmin ? (
+              <a onClick={() => document.execCommand('copy')}>
+                <TiClipboard />
+              </a>
+            ) : null}
           </Url>
           {isAdmin ? (
             <Actions>
