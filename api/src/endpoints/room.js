@@ -1,12 +1,9 @@
-const { unauthorized } = require('boom');
 const { body, param } = require('express-validator/check');
 const { Org, OrgUser, Room } = require('../models');
 const Rooms = require('../services/rooms');
 const { checkValidationResult } = require('../services/errorHandler');
 
 module.exports.create = [
-  param('id')
-    .isMongoId(),
   body('flag')
     .not().isEmpty()
     .isLength({ min: 2, max: 2 }),
@@ -21,22 +18,15 @@ module.exports.create = [
   checkValidationResult,
   (req, res, next) => {
     const { flag, name, peerLimit } = req.body;
-    const { id: org } = req.params;
-    return OrgUser
-      .isOrgAdmin({
-        user: req.user._id,
-        org,
-      })
-      .then(() => {
-        const room = new Room({
-          flag,
-          name,
-          org,
-          peerLimit: peerLimit ? Math.min(Math.max(peerLimit, 2), 8) : undefined,
-        });
-        return room
-          .save();
-      })
+    const { org } = req.params;
+    const room = new Room({
+      flag,
+      name,
+      org,
+      peerLimit: peerLimit ? Math.min(Math.max(peerLimit, 2), 8) : undefined,
+    });
+    return room
+      .save()
       .then(room => (
         res.json({
           flag: room.flag,
@@ -50,42 +40,25 @@ module.exports.create = [
   },
 ];
 
-module.exports.list = [
-  param('id')
-    .isMongoId(),
-  checkValidationResult,
-  (req, res, next) => {
-    const { id: org } = req.params;
-    // Access control
-    return OrgUser
-      .findOne({
-        active: true,
-        user: req.user._id,
-        org,
+module.exports.list = (req, res, next) => {
+  const { org } = req.params;
+  // Fetch the room list from the db
+  return Room
+    .find({ org })
+    .select('-_id flag name peerLimit slug')
+    .then(rooms => res.json(
+      rooms.map(({ _doc }) => {
+        const room = Rooms(`${org}::${_doc.slug}`);
+        return {
+          ..._doc,
+          // Append current peer count
+          // from the room service
+          peers: room ? room.peers.length : 0,
+        };
       })
-      .then((isOrgUser) => {
-        if (!isOrgUser) {
-          throw unauthorized();
-        }
-        // Fetch the room list from the db
-        return Room
-          .find({ org })
-          .select('-_id flag name peerLimit slug')
-          .then(rooms => res.json(
-            rooms.map(({ _doc }) => {
-              const room = Rooms(`${org}::${_doc.slug}`);
-              return {
-                ..._doc,
-                // Append current peer count
-                // from the room service
-                peers: room ? room.peers.length : 0,
-              };
-            })
-          ));
-      })
-      .catch(next);
-  },
-];
+    ))
+    .catch(next);
+};
 
 module.exports.join = (peer, req) => {
   // Monitor if the peer closes the connection
@@ -96,7 +69,7 @@ module.exports.join = (peer, req) => {
   };
   peer.once('close', onClose);
 
-  const { id: org, slug } = req.params;
+  const { org, slug } = req.params;
   // Fetch org
   Org
     .findOne({ slug: org })
@@ -169,30 +142,19 @@ module.exports.join = (peer, req) => {
 };
 
 module.exports.remove = [
-  param('id')
-    .isMongoId(),
   param('slug')
     .not().isEmpty()
     .isLowercase()
     .trim(),
   checkValidationResult,
   (req, res, next) => {
-    const { id: org, slug } = req.params;
-    return OrgUser
-      .isOrgAdmin({
-        user: req.user._id,
-        org,
+    const { org, slug } = req.params;
+    return Room
+      .deleteOne({ org, slug })
+      .then(() => {
+        Rooms.remove(`${org}::${slug}`);
+        res.status(200).end();
       })
-      .then(() => (
-        Room
-          .deleteOne({ org, slug })
-          .then(() => (
-            Rooms.remove(`${org}::${slug}`)
-          ))
-      ))
-      .then(() => (
-        res.status(200).end()
-      ))
       .catch(next);
   },
 ];

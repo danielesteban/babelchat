@@ -28,13 +28,13 @@ module.exports.authenticateWithGoogle = (req, res) => {
 };
 
 module.exports.getPhoto = [
-  param('id')
+  param('user')
     .isMongoId(),
   checkValidationResult,
   (req, res, next) => {
     User
       .findOne({
-        _id: req.params.id,
+        _id: req.params.user,
         photo: { $exists: true },
       })
       .select('updatedAt')

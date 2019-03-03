@@ -6,6 +6,7 @@ const user = require('./user');
 const {
   authenticate,
   requireAuth,
+  requireOrgUser,
   requirePeerAuth,
 } = require('../services/passport');
 
@@ -73,13 +74,13 @@ module.exports = (api) => {
 
   /**
    * @swagger
-   * /org/{id}/{image}:
+   * /org/{org}/{image}:
    *   get:
    *     description: Get org image
    *     tags: [Org]
    *     security: []
    *     parameters:
-   *       - name: id
+   *       - name: org
    *         in: path
    *         description: Org id
    *         required: true
@@ -98,18 +99,18 @@ module.exports = (api) => {
    *         description: Org image not found
    */
   api.get(
-    '/org/:id/:image(cover|logo)',
+    '/org/:org/:image(cover|logo)',
     org.getImage
   );
 
   /**
    * @swagger
-   * /org/{id}/{image}:
+   * /org/{org}/{image}:
    *   post:
    *     description: Update org image
    *     tags: [Org]
    *     parameters:
-   *       - name: id
+   *       - name: org
    *         in: path
    *         description: Org id
    *         required: true
@@ -138,21 +139,22 @@ module.exports = (api) => {
    *         description: Invalid/expired session token
    */
   api.post(
-    '/org/:id/:image(cover|logo)',
+    '/org/:org/:image(cover|logo)',
     preventCache,
     requireAuth,
+    requireOrgUser({ admin: true }),
     upload.single('image'),
     org.updateImage
   );
 
   /**
    * @swagger
-   * /org/{id}/users:
+   * /org/{org}/users:
    *   put:
    *     description: Request org access
    *     tags: [OrgUser]
    *     parameters:
-   *       - name: id
+   *       - name: org
    *         in: path
    *         description: Org id
    *         required: true
@@ -167,7 +169,7 @@ module.exports = (api) => {
    *         description: Invalid/expired session token
    */
   api.put(
-    '/org/:id/users',
+    '/org/:org/users',
     preventCache,
     requireAuth,
     org.requestAccess
@@ -175,12 +177,12 @@ module.exports = (api) => {
 
   /**
    * @swagger
-   * /org/{id}/users:
+   * /org/{org}/users:
    *   get:
    *     description: Get org users
    *     tags: [OrgUser]
    *     parameters:
-   *       - name: id
+   *       - name: org
    *         in: path
    *         description: Org id
    *         required: true
@@ -193,20 +195,21 @@ module.exports = (api) => {
    *         description: Invalid/expired session token
    */
   api.get(
-    '/org/:id/users',
+    '/org/:org/users',
     preventCache,
     requireAuth,
+    requireOrgUser({ admin: true }),
     org.getUsers
   );
 
   /**
    * @swagger
-   * /org/{id}/user/{user}/{resolution}:
+   * /org/{org}/user/{user}/{resolution}:
    *   post:
    *     description: Resolve user access request
    *     tags: [OrgUser]
    *     parameters:
-   *       - name: id
+   *       - name: org
    *         in: path
    *         description: Org id
    *         required: true
@@ -233,20 +236,21 @@ module.exports = (api) => {
    *         description: Invalid/expired session token
    */
   api.post(
-    '/org/:id/user/:user/:resolution(approve|decline)',
+    '/org/:org/user/:user/:resolution(approve|decline)',
     preventCache,
     requireAuth,
+    requireOrgUser({ admin: true }),
     org.resolveAccessRequest
   );
 
   /**
    * @swagger
-   * /org/{id}/user/{user}:
+   * /org/{org}/user/{user}:
    *   delete:
    *     description: Remove org user
    *     tags: [OrgUser]
    *     parameters:
-   *       - name: id
+   *       - name: org
    *         in: path
    *         description: Org id
    *         required: true
@@ -267,15 +271,16 @@ module.exports = (api) => {
    *         description: Invalid/expired session token
    */
   api.delete(
-    '/org/:id/user/:user/',
+    '/org/:org/user/:user/',
     preventCache,
     requireAuth,
+    requireOrgUser({ admin: true }),
     org.removeUser
   );
 
   /**
    * @swagger
-   * /org/{id}/rooms:
+   * /org/{org}/rooms:
    *   put:
    *     description: Create a room
    *     tags: [Room]
@@ -309,20 +314,21 @@ module.exports = (api) => {
    *         description: Invalid/expired session token
    */
   api.put(
-    '/org/:id/rooms',
+    '/org/:org/rooms',
     preventCache,
     requireAuth,
+    requireOrgUser({ admin: true }),
     room.create
   );
 
   /**
    * @swagger
-   * /org/{id}/rooms:
+   * /org/{org}/rooms:
    *   get:
    *     description: Get an org's room list
    *     tags: [Room]
    *     parameters:
-   *       - name: id
+   *       - name: org
    *         in: path
    *         description: Org id
    *         required: true
@@ -351,22 +357,23 @@ module.exports = (api) => {
    *         description: Invalid/expired session token
    */
   api.get(
-    '/org/:id/rooms',
+    '/org/:org/rooms',
     preventCache,
     requireAuth,
+    requireOrgUser(),
     room.list
   );
 
   // Room socket
   api.ws(
-    '/org/:id/room/:slug',
+    '/org/:org/room/:slug',
     requirePeerAuth,
     room.join
   );
 
   /**
    * @swagger
-   * /org/{id}/room/{slug}:
+   * /org/{org}/room/{slug}:
    *   delete:
    *     description: Remove a room
    *     tags: [Room]
@@ -390,9 +397,10 @@ module.exports = (api) => {
    *         description: Invalid/expired session token
    */
   api.delete(
-    '/org/:id/room/:slug',
+    '/org/:org/room/:slug',
     preventCache,
     requireAuth,
+    requireOrgUser({ admin: true }),
     room.remove
   );
 
@@ -447,12 +455,12 @@ module.exports = (api) => {
 
   /**
    * @swagger
-   * /user/{id}/photo:
+   * /user/{user}/photo:
    *   get:
    *     description: Get user photo
    *     tags: [User]
    *     parameters:
-   *       - name: id
+   *       - name: user
    *         in: path
    *         description: User id
    *         required: true
@@ -467,7 +475,7 @@ module.exports = (api) => {
    *         description: User not found
    */
   api.get(
-    '/user/:id/photo',
+    '/user/:user/photo',
     requireAuth,
     user.getPhoto
   );
