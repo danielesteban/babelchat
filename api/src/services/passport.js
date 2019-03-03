@@ -1,8 +1,10 @@
 const { unauthorized } = require('boom');
+const { param } = require('express-validator/check');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const config = require('../config');
-const { User } = require('../models');
+const { OrgUser, User } = require('../models');
+const { checkValidationResult } = require('../services/errorHandler');
 
 const authenticate = (req, state, next) => {
   let token;
@@ -44,6 +46,33 @@ module.exports.requireAuth = (req, res, next) => (
     next();
   })
 );
+
+module.exports.requireOrgUser = ({
+  admin = false,
+  active = true,
+} = {}) => ([
+  param('org')
+    .isMongoId(),
+  checkValidationResult,
+  (req, res, next) => {
+    const { org } = req.params;
+    OrgUser
+      .findOne({
+        ...(admin ? { admin: true } : {}),
+        ...(active ? { active: true } : {}),
+        user: req.user._id,
+        org,
+      })
+      .select('-_id')
+      .then((isOrgUser) => {
+        if (!isOrgUser) {
+          throw unauthorized();
+        }
+        next();
+      })
+      .catch(next);
+  },
+]);
 
 module.exports.requirePeerAuth = (peer, req, next) => (
   authenticate(req, peer, (err) => {

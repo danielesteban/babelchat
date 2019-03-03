@@ -77,7 +77,7 @@ module.exports.get = [
             user: req.user._id,
             org: org._id,
           })
-          .select('active admin')
+          .select('-_id active admin')
           .then((user) => {
             if (!user) {
               return org;
@@ -99,16 +99,14 @@ module.exports.get = [
 ];
 
 module.exports.getImage = [
-  param('id')
-    .isMongoId(),
   param('image')
     .isIn(['cover', 'logo']),
   checkValidationResult,
   (req, res, next) => {
-    const { id, image } = req.params;
+    const { org, image } = req.params;
     Org
       .findOne({
-        _id: id,
+        _id: org,
         [image]: { $exists: true },
       })
       .select('updatedAt')
@@ -135,104 +133,46 @@ module.exports.getImage = [
   },
 ];
 
-module.exports.getImage = [
-  param('id')
-    .isMongoId(),
-  param('image')
-    .isIn(['cover', 'logo']),
-  checkValidationResult,
-  (req, res, next) => {
-    const { id, image } = req.params;
-    Org
-      .findOne({
-        _id: id,
-        [image]: { $exists: true },
-      })
-      .select('updatedAt')
-      .then((user) => {
-        if (!user) {
-          throw notFound();
-        }
-        const lastModified = user.updatedAt.toUTCString();
-        if (req.get('if-modified-since') === lastModified) {
-          return res.status(304).end();
-        }
-        return Org
-          .findById(user._id)
-          .select(`-_id ${image}`)
-          .then(({ [image]: buffer }) => (
-            res
-              .set('Cache-Control', 'must-revalidate')
-              .set('Content-Type', 'image/jpeg')
-              .set('Last-Modified', lastModified)
-              .send(buffer)
-          ));
-      })
-      .catch(next);
-  },
-];
-
-module.exports.getUsers = [
-  param('id')
-    .isMongoId(),
-  checkValidationResult,
-  (req, res, next) => {
-    const { id: org } = req.params;
-    return OrgUser
-      .isOrgAdmin({
-        user: req.user._id,
-        org,
-      })
-      .then(() => (
-        OrgUser
-          .find({
-            admin: false,
-            org,
-          })
-          .select('-_id active user')
-          .populate('user', 'name')
-      ))
-      .then(users => (
-        res.json(users.map(({ active, user }) => ({
-          ...user._doc,
-          isRequest: !active || undefined,
-        })))
-      ))
-      .catch(next);
-  },
-];
+module.exports.getUsers = (req, res, next) => {
+  const { org } = req.params;
+  return OrgUser
+    .find({
+      admin: false,
+      org,
+    })
+    .select('-_id active user')
+    .populate('user', 'name')
+    .then(users => (
+      res.json(users.map(({ active, user }) => ({
+        ...user._doc,
+        isRequest: !active || undefined,
+      })))
+    ))
+    .catch(next);
+};
 
 module.exports.removeUser = [
-  param('id')
-    .isMongoId(),
   param('user')
     .isMongoId(),
   checkValidationResult,
   (req, res, next) => {
-    const { id: org, user } = req.params;
+    const { org, user } = req.params;
     return OrgUser
-      .isOrgAdmin({
-        user: req.user._id,
+      .findOne({
+        active: true,
         org,
+        user,
       })
-      .then(() => (
-        OrgUser
-          .findOne({
-            active: true,
+      .then((isUser) => {
+        if (!isUser) {
+          throw notFound();
+        }
+        return OrgUser
+          .deleteOne({
             org,
             user,
-          })
-          .then((isUser) => {
-            if (!isUser) {
-              throw notFound();
-            }
-            return OrgUser
-              .deleteOne({
-                org,
-                user,
-              });
-          })
-      ))
+          });
+      })
       .then(() => (
         res.status(200).end()
       ))
@@ -241,43 +181,34 @@ module.exports.removeUser = [
 ];
 
 module.exports.resolveAccessRequest = [
-  param('id')
-    .isMongoId(),
   param('user')
     .isMongoId(),
   param('resolution')
     .isIn(['approve', 'decline']),
   checkValidationResult,
   (req, res, next) => {
-    const { id: org, user, resolution } = req.params;
+    const { org, user, resolution } = req.params;
     return OrgUser
-      .isOrgAdmin({
-        user: req.user._id,
+      .findOne({
+        active: false,
         org,
+        user,
       })
-      .then(() => (
-        OrgUser
-          .findOne({
-            active: false,
+      .then((hasRequested) => {
+        if (!hasRequested) {
+          throw notFound();
+        }
+        if (resolution === 'approve') {
+          hasRequested.active = true;
+          return hasRequested
+            .save();
+        }
+        return OrgUser
+          .deleteOne({
             org,
             user,
-          })
-          .then((hasRequested) => {
-            if (!hasRequested) {
-              throw notFound();
-            }
-            if (resolution === 'approve') {
-              hasRequested.active = true;
-              return hasRequested
-                .save();
-            }
-            return OrgUser
-              .deleteOne({
-                org,
-                user,
-              });
-          })
-      ))
+          });
+      })
       .then(() => (
         res.status(200).end()
       ))
@@ -286,11 +217,11 @@ module.exports.resolveAccessRequest = [
 ];
 
 module.exports.requestAccess = [
-  param('id')
+  param('org')
     .isMongoId(),
   checkValidationResult,
   (req, res, next) => {
-    const { id: org } = req.params;
+    const { org } = req.params;
     return Org
       .findById(org)
       .select('_id')
@@ -313,13 +244,11 @@ module.exports.requestAccess = [
 ];
 
 module.exports.updateImage = [
-  param('id')
-    .isMongoId(),
   param('image')
     .isIn(['cover', 'logo']),
   checkValidationResult,
   (req, res, next) => {
-    const { id: org, image } = req.params;
+    const { org, image } = req.params;
     if (
       !req.file
       || !req.file.buffer
@@ -327,23 +256,16 @@ module.exports.updateImage = [
     ) {
       throw badData();
     }
-    return OrgUser
-      .isOrgAdmin({
-        user: req.user._id,
-        org,
+    return Org
+      .findById(org)
+      .then((org) => {
+        if (!org) {
+          throw notFound();
+        }
+        org[image] = req.file.buffer;
+        return org
+          .save();
       })
-      .then(() => (
-        Org
-          .findById(org)
-          .then((org) => {
-            if (!org) {
-              throw notFound();
-            }
-            org[image] = req.file.buffer;
-            return org
-              .save();
-          })
-      ))
       .then(() => (
         res.status(200).end()
       ))
