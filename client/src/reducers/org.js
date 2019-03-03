@@ -178,6 +178,8 @@ const users = (
   switch (action.type) {
     case types.ORG_FETCH_USERS_FULFILLED:
       return action.payload.sort(({ name: a }, { name: b }) => a.localeCompare(b));
+    case types.ORG_REMOVE_USER_FULFILLED:
+      return state.filter(({ _id }) => (_id !== action.payload.user));
     case types.ORG_RESOLVE_REQUEST_FULFILLED:
       if (action.payload.resolution === 'approve') {
         return state.map((user) => {

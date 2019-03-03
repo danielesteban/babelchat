@@ -202,6 +202,89 @@ module.exports.getUsers = [
   },
 ];
 
+module.exports.removeUser = [
+  param('id')
+    .isMongoId(),
+  param('user')
+    .isMongoId(),
+  checkValidationResult,
+  (req, res, next) => {
+    const { id: org, user } = req.params;
+    return OrgUser
+      .isOrgAdmin({
+        user: req.user._id,
+        org,
+      })
+      .then(() => (
+        OrgUser
+          .findOne({
+            active: true,
+            org,
+            user,
+          })
+          .then((isUser) => {
+            if (!isUser) {
+              throw notFound();
+            }
+            return OrgUser
+              .deleteOne({
+                org,
+                user,
+              });
+          })
+      ))
+      .then(() => (
+        res.status(200).end()
+      ))
+      .catch(next);
+  },
+];
+
+module.exports.resolveAccessRequest = [
+  param('id')
+    .isMongoId(),
+  param('user')
+    .isMongoId(),
+  param('resolution')
+    .isIn(['approve', 'decline']),
+  checkValidationResult,
+  (req, res, next) => {
+    const { id: org, user, resolution } = req.params;
+    return OrgUser
+      .isOrgAdmin({
+        user: req.user._id,
+        org,
+      })
+      .then(() => (
+        OrgUser
+          .findOne({
+            active: false,
+            org,
+            user,
+          })
+          .then((hasRequested) => {
+            if (!hasRequested) {
+              throw notFound();
+            }
+            if (resolution === 'approve') {
+              hasRequested.active = true;
+              return hasRequested
+                .save();
+            }
+            return OrgUser
+              .deleteOne({
+                org,
+                user,
+              });
+          })
+      ))
+      .then(() => (
+        res.status(200).end()
+      ))
+      .catch(next);
+  },
+];
+
 module.exports.requestAccess = [
   param('id')
     .isMongoId(),
@@ -259,51 +342,6 @@ module.exports.updateImage = [
             org[image] = req.file.buffer;
             return org
               .save();
-          })
-      ))
-      .then(() => (
-        res.status(200).end()
-      ))
-      .catch(next);
-  },
-];
-
-module.exports.resolveAccessRequest = [
-  param('id')
-    .isMongoId(),
-  param('user')
-    .isMongoId(),
-  param('resolution')
-    .isIn(['approve', 'decline']),
-  checkValidationResult,
-  (req, res, next) => {
-    const { id: org, user, resolution } = req.params;
-    return OrgUser
-      .isOrgAdmin({
-        user: req.user._id,
-        org,
-      })
-      .then(() => (
-        OrgUser
-          .findOne({
-            active: false,
-            org,
-            user,
-          })
-          .then((request) => {
-            if (!request) {
-              throw notFound();
-            }
-            if (resolution === 'approve') {
-              request.active = true;
-              return request
-                .save();
-            }
-            return OrgUser
-              .deleteOne({
-                org,
-                user,
-              });
           })
       ))
       .then(() => (
