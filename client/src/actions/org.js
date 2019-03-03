@@ -15,24 +15,6 @@ export function createRoom({ flag, name, peerLimit }) {
   };
 }
 
-export function hideCreateRoom() {
-  return {
-    type: types.ORG_HIDE_CREATE_ROOM,
-  };
-}
-
-export function hideSignup() {
-  return {
-    type: types.ORG_HIDE_SIGNUP,
-  };
-}
-
-export function hideUsers() {
-  return {
-    type: types.ORG_HIDE_USERS,
-  };
-}
-
 export function fetch(slug) {
   return {
     type: types.ORG_FETCH,
@@ -140,24 +122,6 @@ export function signup({ name }) {
       endpoint: 'orgs',
       method: 'PUT',
     }),
-  };
-}
-
-export function showCreateRoom() {
-  return {
-    type: types.ORG_SHOW_CREATE_ROOM,
-  };
-}
-
-export function showSignup() {
-  return {
-    type: types.ORG_SHOW_SIGNUP,
-  };
-}
-
-export function showUsers() {
-  return {
-    type: types.ORG_SHOW_USERS,
   };
 }
 

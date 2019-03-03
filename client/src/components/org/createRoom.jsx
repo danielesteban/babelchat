@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react';
 import { TiPlus } from 'react-icons/ti';
 import { connect } from 'react-redux';
 import { Translate } from 'react-redux-i18n';
-import { createRoom, hideCreateRoom as hide } from '@/actions/org';
+import { createRoom } from '@/actions/org';
 import Button from '@/components/ui/button';
 import Dialog from '@/components/ui/dialog';
 import Form from '@/components/ui/form';
@@ -29,40 +29,56 @@ class CreateRoom extends PureComponent {
   }
 
   render() {
-    const { isShowingCreateRoom, hide } = this.props;
-    if (!isShowingCreateRoom) {
-      return null;
-    }
     return (
       <Dialog
-        title="Room.Create.title"
-        hide={hide}
+        id="Org.CreateRoom"
       >
         <Form onSubmit={this.onSubmit}>
           <div>
-            <label><Translate value="Room.Create.name" /></label>
-            <input type="text" name="name" />
+            <label>
+              <Translate value="Org.CreateRoom.name" />
+            </label>
+            <input
+              type="text"
+              name="name"
+              required
+              autoFocus
+            />
           </div>
           <div>
-            <label><Translate value="Room.Create.flag" /></label>
-            <select name="flag" defaultValue="gb">
+            <label>
+              <Translate value="Org.CreateRoom.flag" />
+            </label>
+            <select name="flag" defaultValue="gb" required>
               {Countries.map(({ code, name }) => (
-                <option value={code}>
+                <option
+                  key={code}
+                  value={code}
+                >
                   {name}
                 </option>
               ))}
             </select>
           </div>
           <div>
-            <label><Translate value="Room.Create.peerLimit" /></label>
-            <input type="number" name="peerLimit" min="2" max="8" defaultValue="8" />
+            <label>
+              <Translate value="Org.CreateRoom.peerLimit" />
+            </label>
+            <input
+              type="number"
+              name="peerLimit"
+              min="2"
+              max="8"
+              defaultValue="8"
+              required
+            />
           </div>
           <div className="submit">
             <Button
               type="submit"
             >
               <TiPlus />
-              <Translate value="Room.Create.submit" />
+              <Translate value="Org.CreateRoom.submit" />
             </Button>
           </div>
         </Form>
@@ -72,21 +88,12 @@ class CreateRoom extends PureComponent {
 }
 
 CreateRoom.propTypes = {
-  isShowingCreateRoom: PropTypes.bool.isRequired,
   createRoom: PropTypes.func.isRequired,
-  hide: PropTypes.func.isRequired,
 };
 
 export default connect(
-  ({
-    org: {
-      isShowingCreateRoom,
-    },
-  }) => ({
-    isShowingCreateRoom,
-  }),
+  () => ({}),
   {
     createRoom,
-    hide,
   }
 )(CreateRoom);

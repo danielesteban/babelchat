@@ -3,7 +3,8 @@ import React, { PureComponent } from 'react';
 import { TiTick } from 'react-icons/ti';
 import { connect } from 'react-redux';
 import { Translate } from 'react-redux-i18n';
-import { hideSettings as hide, saveSettings as save } from '@/actions/user';
+import { hide } from '@/actions/dialog';
+import { saveSettings as save } from '@/actions/user';
 import Button from '@/components/ui/button';
 import Dialog from '@/components/ui/dialog';
 import Form from '@/components/ui/form';
@@ -35,7 +36,7 @@ class Settings extends PureComponent {
     const audioInput = form.audioInput.value;
     const videoInput = form.videoInput.value;
     save({ audioInput, videoInput });
-    hide();
+    hide('User.Settings');
     if (isStreaming) {
       window.location.reload();
     }
@@ -47,7 +48,6 @@ class Settings extends PureComponent {
         audioInput,
         videoInput,
       },
-      hide,
     } = this.props;
     const {
       audioInputs,
@@ -58,12 +58,11 @@ class Settings extends PureComponent {
     }
     return (
       <Dialog
-        title="User.settings"
-        hide={hide}
+        id="User.Settings"
       >
         <Form onSubmit={this.onSubmit}>
           <div>
-            <label><Translate value="User.audioInput" /></label>
+            <label><Translate value="User.Settings.audioInput" /></label>
             <select name="audioInput" defaultValue={audioInput}>
               {audioInputs.map(({ deviceId, label }) => (
                 <option key={deviceId} value={deviceId}>{label}</option>
@@ -71,7 +70,7 @@ class Settings extends PureComponent {
             </select>
           </div>
           <div>
-            <label><Translate value="User.videoInput" /></label>
+            <label><Translate value="User.Settings.videoInput" /></label>
             <select name="videoInput" defaultValue={videoInput}>
               {videoInputs.map(({ deviceId, label }) => (
                 <option key={deviceId} value={deviceId}>{label}</option>
@@ -81,7 +80,7 @@ class Settings extends PureComponent {
           <div className="submit">
             <Button type="submit">
               <TiTick />
-              <Translate value="User.saveSettings" />
+              <Translate value="User.Settings.save" />
             </Button>
           </div>
         </Form>

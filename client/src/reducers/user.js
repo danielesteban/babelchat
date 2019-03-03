@@ -39,20 +39,6 @@ const isAuth = (
   }
 };
 
-const isShowingSettings = (
-  state = false,
-  action
-) => {
-  switch (action.type) {
-    case types.USER_HIDE_SETTINGS:
-      return false;
-    case types.USER_SHOW_SETTINGS:
-      return true;
-    default:
-      return state;
-  }
-};
-
 const orgs = (
   state = [],
   action
@@ -175,7 +161,6 @@ const video = (
 const userReducer = combineReducers({
   isAudioMuted,
   isAuth,
-  isShowingSettings,
   orgs,
   profile,
   settings,

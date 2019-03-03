@@ -10,7 +10,8 @@ import Login from '@/components/ui/login';
 import Dialog from '@/components/ui/dialog';
 import Form from '@/components/ui/form';
 import Page from '@/components/ui/page';
-import { showSignup, signup, hideSignup } from '@/actions/org';
+import { hide as hideDialog, show as showDialog } from '@/actions/dialog';
+import { signup } from '@/actions/org';
 import { fetchOrgs } from '@/actions/user';
 
 const Heading = styled.div`
@@ -138,8 +139,13 @@ class Landing extends PureComponent {
     }
   }
 
+  componentWillUnmount() {
+    const { hideDialog } = this.props;
+    hideDialog('Org.Signup');
+  }
+
   onSubmit(e) {
-    const { hideSignup, history, signup } = this.props;
+    const { hideDialog, history, signup } = this.props;
     const { target: form } = e;
     e.preventDefault();
     const name = form.name.value;
@@ -151,16 +157,14 @@ class Landing extends PureComponent {
         history.push(`/${slug}`)
       ))
       .catch(() => {})
-      .finally(hideSignup);
+      .finally(() => hideDialog('Org.Signup'));
   }
 
   render() {
     const {
-      hideSignup,
       isAuth,
-      isSigningup,
       orgs,
-      showSignup,
+      showDialog,
     } = this.props;
     return (
       <Page>
@@ -212,7 +216,7 @@ class Landing extends PureComponent {
           {isAuth ? (
             <Button
               type="button"
-              onClick={showSignup}
+              onClick={() => showDialog('Org.Signup')}
             >
               <TiGroup />
               <Translate value="Org.CTA.button" />
@@ -221,31 +225,28 @@ class Landing extends PureComponent {
             <Login
               icon={TiGroup}
               label="Org.CTA.button"
-              onSession={showSignup}
+              onSession={() => showDialog('Org.Signup')}
             />
           )}
         </CTA>
-        {isSigningup ? (
-          <Dialog
-            title="Org.Signup.title"
-            hide={hideSignup}
-          >
-            <Form onSubmit={this.onSubmit}>
-              <div>
-                <label><Translate value="Org.Signup.name" /></label>
-                <input type="text" name="name" />
-              </div>
-              <div className="submit">
-                <Button
-                  type="submit"
-                >
-                  <TiPlus />
-                  <Translate value="Org.Signup.submit" />
-                </Button>
-              </div>
-            </Form>
-          </Dialog>
-        ) : null}
+        <Dialog
+          id="Org.Signup"
+        >
+          <Form onSubmit={this.onSubmit}>
+            <div>
+              <label><Translate value="Org.Signup.name" /></label>
+              <input type="text" name="name" />
+            </div>
+            <div className="submit">
+              <Button
+                type="submit"
+              >
+                <TiPlus />
+                <Translate value="Org.Signup.submit" />
+              </Button>
+            </div>
+          </Form>
+        </Dialog>
       </Page>
     );
   }
@@ -256,26 +257,24 @@ Landing.propTypes = {
   history: PropTypes.object.isRequired,
   /* eslint-enable react/forbid-prop-types */
   isAuth: PropTypes.bool.isRequired,
-  isSigningup: PropTypes.bool.isRequired,
   orgs: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string.isRequired,
     slug: PropTypes.string.isRequired,
   })).isRequired,
   fetchOrgs: PropTypes.func.isRequired,
-  hideSignup: PropTypes.func.isRequired,
-  showSignup: PropTypes.func.isRequired,
+  hideDialog: PropTypes.func.isRequired,
+  showDialog: PropTypes.func.isRequired,
   signup: PropTypes.func.isRequired,
 };
 
 export default connect(
   ({
-    org: { isSigningup },
     user: { isAuth, orgs },
-  }) => ({ isAuth, isSigningup, orgs }),
+  }) => ({ isAuth, orgs }),
   {
     fetchOrgs,
-    hideSignup,
-    showSignup,
+    hideDialog,
+    showDialog,
     signup,
   }
 )(Landing);
