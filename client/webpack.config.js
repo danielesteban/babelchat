@@ -129,6 +129,9 @@ module.exports = {
   },
   devtool: false,
   devServer: {
+    historyApiFallback: {
+      disableDotRule: true,
+    },
     hot: true,
     port: 8080,
     stats: 'minimal',
