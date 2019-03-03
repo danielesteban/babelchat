@@ -1,7 +1,7 @@
 const { body, param } = require('express-validator/check');
 const { Org, OrgUser, Room } = require('../models');
-const Rooms = require('../services/rooms');
 const { checkValidationResult } = require('../services/errorHandler');
+const Rooms = require('../services/rooms');
 
 module.exports.create = [
   body('flag')

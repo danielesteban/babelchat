@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import {
   TiClipboard,
+  TiCog,
   TiGroup,
   TiMessages,
   TiUpload,
@@ -18,6 +19,7 @@ import {
 } from '@/actions/org';
 import CreateRoom from '@/components/org/createRoom';
 import Rooms from '@/components/org/rooms';
+import Settings from '@/components/org/settings';
 import Users from '@/components/org/users';
 import Button from '@/components/ui/button';
 import Login from '@/components/ui/login';
@@ -174,6 +176,7 @@ class Org extends PureComponent {
     const { hideDialog, reset } = this.props;
     reset();
     hideDialog('Org.CreateRoom');
+    hideDialog('Org.Settings');
     hideDialog('Org.ManageUsers');
   }
 
@@ -269,6 +272,13 @@ class Org extends PureComponent {
                 <TiMessages />
                 <Translate value="Org.Nav.createRoom" />
               </Button>
+              <Button
+                type="button"
+                onClick={() => showDialog('Org.Settings')}
+              >
+                <TiCog />
+                <Translate value="Org.Nav.settings" />
+              </Button>
             </Actions>
           ) : null}
         </Nav>
@@ -317,6 +327,7 @@ class Org extends PureComponent {
           {isAdmin ? (
             <div>
               <CreateRoom />
+              <Settings />
               <Users />
             </div>
           ) : null}

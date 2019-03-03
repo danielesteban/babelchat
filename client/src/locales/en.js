@@ -24,6 +24,15 @@ export default {
       createRoom: 'Create room',
       customize: 'Customize',
       manageUsers: 'Manage students',
+      settings: 'Settings',
+    },
+    Settings: {
+      dangerZone: 'Danger Zone',
+      title: 'Settings',
+      name: 'Name',
+      organization: 'Organization',
+      remove: 'Remove organization',
+      save: 'Save settings',
     },
     Signup: {
       title: 'Create an account',
@@ -43,8 +52,8 @@ export default {
       title: 'Settings',
       audioInput: 'Audio input',
       save: 'Save settings',
-      signIn: 'Sign-In with google',
       videoInput: 'Video input',
     },
+    signIn: 'Sign-In with google',
   },
 };

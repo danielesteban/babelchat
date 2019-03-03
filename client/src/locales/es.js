@@ -24,6 +24,15 @@ export default {
       createRoom: 'Crear sala',
       customize: 'Personalizar',
       manageUsers: 'Estudiantes',
+      settings: 'Preferencias',
+    },
+    Settings: {
+      dangerZone: 'Danger zone',
+      title: 'Preferencias',
+      name: 'Nombre',
+      organization: 'Organización',
+      remove: 'Eliminar organización',
+      save: 'Guardar preferencias',
     },
     Signup: {
       title: 'Crear una cuenta',
@@ -43,8 +52,8 @@ export default {
       title: 'Preferencias',
       audioInput: 'Entrada de audio',
       save: 'Guardar preferencias',
-      signIn: 'Iniciar Sesión con google',
       videoInput: 'Entrada de vídeo',
     },
+    signIn: 'Iniciar Sesión con google',
   },
 };

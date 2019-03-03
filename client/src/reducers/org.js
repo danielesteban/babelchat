@@ -79,6 +79,7 @@ const name = (
 ) => {
   switch (action.type) {
     case types.ORG_FETCH_FULFILLED:
+    case types.ORG_UPDATE_FULFILLED:
       return action.payload.name;
     case types.ORG_RESET:
       return '';
