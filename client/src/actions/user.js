@@ -11,12 +11,6 @@ export function fetchOrgs() {
   };
 }
 
-export function hideSettings() {
-  return {
-    type: types.USER_HIDE_SETTINGS,
-  };
-}
-
 export function refreshSession(session) {
   if (session) {
     return {
@@ -43,12 +37,6 @@ export function setLocale(locale) {
   return (dispatch) => {
     localStorage.setItem('BABELCHAT::LOCALE', locale);
     dispatch(reduxSetLocale(locale));
-  };
-}
-
-export function showSettings() {
-  return {
-    type: types.USER_SHOW_SETTINGS,
   };
 }
 

@@ -9,12 +9,11 @@ import {
 import { connect } from 'react-redux';
 import { Translate } from 'react-redux-i18n';
 import styled from 'styled-components';
+import { hide as hideDialog, show as showDialog } from '@/actions/dialog';
 import {
   fetch,
   requestAccess,
   reset,
-  showCreateRoom,
-  showUsers,
   updateImage,
 } from '@/actions/org';
 import CreateRoom from '@/components/org/createRoom';
@@ -172,8 +171,10 @@ class Org extends PureComponent {
   }
 
   componentWillUnmount() {
-    const { reset } = this.props;
+    const { hideDialog, reset } = this.props;
     reset();
+    hideDialog('Org.CreateRoom');
+    hideDialog('Org.ManageUsers');
   }
 
   fetch() {
@@ -219,8 +220,7 @@ class Org extends PureComponent {
       match: { params: { slug } },
       name,
       pendingRequests,
-      showCreateRoom,
-      showUsers,
+      showDialog,
     } = this.props;
     if (!hasLoaded) {
       return null;
@@ -254,7 +254,7 @@ class Org extends PureComponent {
             <Actions>
               <Button
                 type="button"
-                onClick={showUsers}
+                onClick={() => showDialog('Org.ManageUsers')}
               >
                 <TiGroup />
                 <Translate value="Org.Nav.manageUsers" />
@@ -264,7 +264,7 @@ class Org extends PureComponent {
               </Button>
               <Button
                 type="button"
-                onClick={showCreateRoom}
+                onClick={() => showDialog('Org.CreateRoom')}
               >
                 <TiMessages />
                 <Translate value="Org.Nav.createRoom" />
@@ -344,10 +344,10 @@ Org.propTypes = {
   name: PropTypes.string.isRequired,
   pendingRequests: PropTypes.number.isRequired,
   fetch: PropTypes.func.isRequired,
+  hideDialog: PropTypes.func.isRequired,
   requestAccess: PropTypes.func.isRequired,
   reset: PropTypes.func.isRequired,
-  showCreateRoom: PropTypes.func.isRequired,
-  showUsers: PropTypes.func.isRequired,
+  showDialog: PropTypes.func.isRequired,
   updateImage: PropTypes.func.isRequired,
 };
 
@@ -377,10 +377,10 @@ export default connect(
   }),
   {
     fetch,
+    hideDialog,
     requestAccess,
     reset,
-    showCreateRoom,
-    showUsers,
+    showDialog,
     updateImage,
   }
 )(Org);

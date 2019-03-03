@@ -8,7 +8,8 @@ import {
 } from 'react-icons/ti';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { showSettings, signout, toggleAudio } from '@/actions/user';
+import { show as showDialog } from '@/actions/dialog';
+import { signout, toggleAudio } from '@/actions/user';
 import Video from '@/components/room/video';
 import API from '@/services/api';
 import Settings from './settings';
@@ -54,10 +55,9 @@ const Wrapper = styled.div`
 const User = ({
   isAudioMuted,
   isAuth,
-  isShowingSettings,
   profile,
   video,
-  showSettings,
+  showDialog,
   signout,
   toggleAudio,
 }) => (
@@ -77,7 +77,7 @@ const User = ({
           <a onClick={toggleAudio}>
             {isAudioMuted ? <TiVolumeMute /> : <TiVolumeDown />}
           </a>
-          <a onClick={showSettings}>
+          <a onClick={() => showDialog('User.Settings')}>
             <TiCog />
           </a>
           <a onClick={signout}>
@@ -85,9 +85,7 @@ const User = ({
           </a>
         </div>
       </Wrapper>
-      {isShowingSettings ? (
-        <Settings />
-      ) : null}
+      <Settings />
     </div>
   ) : null
 );
@@ -95,12 +93,11 @@ const User = ({
 User.propTypes = {
   isAudioMuted: PropTypes.bool.isRequired,
   isAuth: PropTypes.bool.isRequired,
-  isShowingSettings: PropTypes.bool.isRequired,
   profile: PropTypes.shape({
     _id: PropTypes.string,
   }).isRequired,
   video: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]).isRequired,
-  showSettings: PropTypes.func.isRequired,
+  showDialog: PropTypes.func.isRequired,
   signout: PropTypes.func.isRequired,
   toggleAudio: PropTypes.func.isRequired,
 };
@@ -110,19 +107,17 @@ export default connect(
     user: {
       isAudioMuted,
       isAuth,
-      isShowingSettings,
       profile,
       video,
     },
   }) => ({
     isAudioMuted,
     isAuth,
-    isShowingSettings,
     profile,
     video,
   }),
   {
-    showSettings,
+    showDialog,
     signout,
     toggleAudio,
   }

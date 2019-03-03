@@ -6,7 +6,6 @@ import { Translate } from 'react-redux-i18n';
 import styled from 'styled-components';
 import {
   fetchUsers as fetch,
-  hideUsers as hide,
   removeUser,
   resolveRequest,
 } from '@/actions/org';
@@ -61,19 +60,13 @@ class Users extends PureComponent {
   render() {
     const {
       list,
-      isShowingUsers,
-      hide,
       removeUser,
       resolveRequest,
     } = this.props;
-    if (!isShowingUsers) {
-      return null;
-    }
     return (
       <Dialog
-        title="Org.Nav.manageUsers"
+        id="Org.ManageUsers"
         width="512px"
-        hide={hide}
       >
         <Scroll>
           {list.map(({
@@ -95,7 +88,7 @@ class Users extends PureComponent {
                     onClick={() => resolveRequest({ user: _id, resolution: 'decline' })}
                   >
                     <TiTimes />
-                    <Translate value="Org.Request.decline" />
+                    <Translate value="Org.ManageUsers.decline" />
                   </Button>
                   <Button
                     type="button"
@@ -103,7 +96,7 @@ class Users extends PureComponent {
                     primary
                   >
                     <TiTick />
-                    <Translate value="Org.Request.approve" />
+                    <Translate value="Org.ManageUsers.approve" />
                   </Button>
                 </div>
               ) : (
@@ -123,13 +116,11 @@ class Users extends PureComponent {
 }
 
 Users.propTypes = {
-  isShowingUsers: PropTypes.bool.isRequired,
   list: PropTypes.arrayOf(PropTypes.shape({
     _id: PropTypes.string.isRequired,
     isRequest: PropTypes.bool,
     name: PropTypes.string.isRequired,
   })).isRequired,
-  hide: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
   removeUser: PropTypes.func.isRequired,
   resolveRequest: PropTypes.func.isRequired,
@@ -138,15 +129,12 @@ Users.propTypes = {
 export default connect(
   ({
     org: {
-      isShowingUsers,
       users: list,
     },
   }) => ({
-    isShowingUsers,
     list,
   }),
   {
-    hide,
     fetch,
     removeUser,
     resolveRequest,

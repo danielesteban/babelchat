@@ -1,8 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { TiTimes } from 'react-icons/ti';
+import { connect } from 'react-redux';
 import { Translate } from 'react-redux-i18n';
 import styled from 'styled-components';
+import { hide } from '@/actions/dialog';
 
 const Overlay = styled.div`
   position: fixed;
@@ -54,16 +56,18 @@ const Content = styled.div`
 
 const Dialog = ({
   children,
+  id,
+  isShowing,
   title,
   width,
   hide,
-}) => (
+}) => (isShowing ? (
   <Overlay>
-    <Wrapper width={width}>
+    <Wrapper width={width || '400px'}>
       <Heading>
-        <Translate value={title} />
+        <Translate value={title || `${id}.title`} />
         <a
-          onClick={() => hide()}
+          onClick={() => hide(id)}
         >
           <TiTimes />
         </a>
@@ -73,17 +77,27 @@ const Dialog = ({
       </Content>
     </Wrapper>
   </Overlay>
-);
+) : null);
 
 Dialog.defaultProps = {
-  width: '400px',
+  title: undefined,
+  width: undefined,
 };
 
 Dialog.propTypes = {
   children: PropTypes.node.isRequired,
-  title: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
+  isShowing: PropTypes.bool.isRequired,
+  title: PropTypes.string,
   width: PropTypes.string,
   hide: PropTypes.func.isRequired,
 };
 
-export default Dialog;
+export default connect(
+  ({ dialog }, { id }) => ({
+    isShowing: dialog[id] || false,
+  }),
+  {
+    hide,
+  }
+)(Dialog);

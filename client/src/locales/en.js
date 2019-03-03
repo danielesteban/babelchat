@@ -3,33 +3,27 @@ export default {
     description: 'This is not the web page you\'re looking for.',
     goBack: 'Take me back home',
   },
-  Room: {
-    Create: {
+  Org: {
+    CreateRoom: {
       title: 'Create a room',
       flag: 'Flag',
       name: 'Name',
       peerLimit: 'Peer limit',
       submit: 'Create room',
     },
-    joining: 'Joining room...',
-    welcome: 'Welcome to: "%{name}"',
-  },
-  Rooms: {
-    peers: '%{count}/%{limit} peers',
-  },
-  Org: {
-    Nav: {
-      createRoom: 'Create room',
-      customize: 'Customize',
-      manageUsers: 'Manage students',
-    },
     CTA: {
       copy: 'Are you an academy manager/teacher?',
       button: 'Try it now',
     },
-    Request: {
+    ManageUsers: {
+      title: 'Manage students',
       approve: 'Approve',
       decline: 'Decline',
+    },
+    Nav: {
+      createRoom: 'Create room',
+      customize: 'Customize',
+      manageUsers: 'Manage students',
     },
     Signup: {
       title: 'Create an account',
@@ -37,11 +31,20 @@ export default {
       submit: 'Create account',
     },
   },
+  Room: {
+    joining: 'Joining room...',
+    welcome: 'Welcome to: "%{name}"',
+  },
+  Rooms: {
+    peers: '%{count}/%{limit} peers',
+  },
   User: {
-    audioInput: 'Audio input',
-    settings: 'Settings',
-    saveSettings: 'Save settings',
-    signIn: 'Sign-In with google',
-    videoInput: 'Video input',
+    Settings: {
+      title: 'Settings',
+      audioInput: 'Audio input',
+      save: 'Save settings',
+      signIn: 'Sign-In with google',
+      videoInput: 'Video input',
+    },
   },
 };

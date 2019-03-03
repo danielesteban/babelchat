@@ -57,51 +57,6 @@ const isAdmin = (
   }
 };
 
-const isShowingCreateRoom = (
-  state = false,
-  action
-) => {
-  switch (action.type) {
-    case types.ORG_SHOW_CREATE_ROOM:
-      return true;
-    case types.ORG_CREATE_ROOM_FULFILLED:
-    case types.ORG_HIDE_CREATE_ROOM:
-    case types.ORG_RESET:
-      return false;
-    default:
-      return state;
-  }
-};
-
-const isShowingUsers = (
-  state = false,
-  action
-) => {
-  switch (action.type) {
-    case types.ORG_SHOW_USERS:
-      return true;
-    case types.ORG_HIDE_USERS:
-    case types.ORG_RESET:
-      return false;
-    default:
-      return state;
-  }
-};
-
-const isSigningup = (
-  state = false,
-  action
-) => {
-  switch (action.type) {
-    case types.ORG_SHOW_SIGNUP:
-      return true;
-    case types.ORG_HIDE_SIGNUP:
-      return false;
-    default:
-      return state;
-  }
-};
-
 const isUser = (
   state = false,
   action
@@ -205,9 +160,6 @@ const orgReducer = combineReducers({
   id,
   isActive,
   isAdmin,
-  isShowingCreateRoom,
-  isShowingUsers,
-  isSigningup,
   isUser,
   name,
   pendingRequests,
