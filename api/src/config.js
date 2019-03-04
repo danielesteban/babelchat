@@ -22,10 +22,10 @@ if (
 
 module.exports = {
   defaultRooms: [
-    { flag: 'gb', name: 'English 1 to 1', peerLimit: 2 },
-    { flag: 'gb', name: 'English Group Chat' },
-    { flag: 'es', name: 'Spanish 1 to 1', peerLimit: 2 },
-    { flag: 'es', name: 'Spanish Group Chat' },
+    { flag: 'gb', name: 'English 101 Group Chat', peerLimit: 4 },
+    { flag: 'gb', name: 'English Advanced Group Chat', peerLimit: 4 },
+    { flag: 'es', name: 'Spanish 101 Group Chat', peerLimit: 4 },
+    { flag: 'es', name: 'Spanish Advanced Group Chat', peerLimit: 4 },
   ],
   googleAuth: {
     clientID: process.env.GOOGLE_CLIENT_ID,

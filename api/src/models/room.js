@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const URLSlugs = require('mongoose-url-slugs');
+const ShortId = require('mongoose-shortid-nodeps');
 
 const RoomSchema = new mongoose.Schema({
   flag: { type: String, required: true },
@@ -23,9 +23,9 @@ const RoomSchema = new mongoose.Schema({
     },
     photo: { type: Buffer, required: true },
   }],
+  slug: ShortId,
 }, { timestamps: true });
 
-RoomSchema.plugin(URLSlugs('name', { index: false, indexUnique: false }));
-RoomSchema.index({ slug: true, org: true, unique: true });
+RoomSchema.index({ slug: 1, org: 1 }, { unique: true });
 
 module.exports = mongoose.model('Room', RoomSchema);

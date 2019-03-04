@@ -5,11 +5,14 @@ export default {
   },
   Org: {
     CreateRoom: {
+      inviteOnly: 'Invite only',
       title: 'Create a room',
       flag: 'Flag',
       name: 'Name',
       peerLimit: 'Peer limit',
+      publicRoom: 'Public room',
       submit: 'Create room',
+      users: 'Students',
     },
     CTA: {
       copy: 'Are you an academy manager/teacher?',
@@ -19,6 +22,7 @@ export default {
       title: 'Manage students',
       approve: 'Approve',
       decline: 'Decline',
+      empty: 'Your organization doesn\'t have any students yet.',
     },
     Nav: {
       createRoom: 'Create room',

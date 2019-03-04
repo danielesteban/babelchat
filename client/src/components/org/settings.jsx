@@ -10,29 +10,7 @@ import { remove, update } from '@/actions/org';
 import Button from '@/components/ui/button';
 import Dialog from '@/components/ui/dialog';
 import Form from '@/components/ui/form';
-
-const Tabs = styled.div`
-  display: flex;
-  margin: -1rem;
-  margin-bottom: 1rem;
-  background-color: #111;
-  color: #eee;
-  > div {
-    font-weight: 700;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    transition: background-color ease-out .2s;
-    will-change: background-color, color;
-    &:hover {
-      background-color: #333;
-    }
-    &.active {
-      background-color: #eee;
-      color: #353535;
-      cursor: default;
-    }
-  }
-`;
+import Tabs from '@/components/ui/tabs';
 
 const DangerZone = styled(Form)`
   background: #933;

@@ -16,6 +16,11 @@ import API from '@/services/api';
 const Scroll = styled.div`
   max-height: 400px;
   overflow-y: auto;
+  > div.empty {
+    text-align: center;
+    color: #999;
+    font-size: 1.5em;
+  }
 `;
 
 const User = styled.div`
@@ -109,6 +114,13 @@ class Users extends PureComponent {
               )}
             </User>
           ))}
+          {!list.length ? (
+            <div className="empty">
+              <p>
+                <Translate value="Org.ManageUsers.empty" />
+              </p>
+            </div>
+          ) : null}
         </Scroll>
       </Dialog>
     );
