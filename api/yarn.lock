@@ -1930,6 +1930,11 @@ mongoose-legacy-pluralize@1.0.2:
   resolved "https://registry.yarnpkg.com/mongoose-legacy-pluralize/-/mongoose-legacy-pluralize-1.0.2.tgz#3ba9f91fa507b5186d399fb40854bff18fb563e4"
   integrity sha512-Yo/7qQU4/EyIS8YDFSeenIvXxZN+ld7YdV9LqFVQJzTLye8unujAWPZ4NWKfFA+RNjh+wvTWKY9Z3E5XM6ZZiQ==
 
+mongoose-shortid-nodeps@^0.6.5:
+  version "0.6.5"
+  resolved "https://registry.yarnpkg.com/mongoose-shortid-nodeps/-/mongoose-shortid-nodeps-0.6.5.tgz#ddd667983d54dcf61f2375478373cf7eda30a491"
+  integrity sha1-3dZnmD1U3PYfI3VHg3PPftowpJE=
+
 mongoose-url-slugs@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/mongoose-url-slugs/-/mongoose-url-slugs-1.0.2.tgz#dd2b62f70e3df38ef7eb0c3bb53d5fdef9602426"

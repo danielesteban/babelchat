@@ -144,7 +144,6 @@ module.exports.join = (peer, req) => {
 module.exports.remove = [
   param('slug')
     .not().isEmpty()
-    .isLowercase()
     .trim(),
   checkValidationResult,
   (req, res, next) => {
