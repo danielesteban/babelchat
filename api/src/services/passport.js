@@ -100,10 +100,9 @@ module.exports.setup = () => {
       photos,
     } = profile;
     const [email] = emails
-      .filter(({ type }) => (type === 'account'))
       .map(({ value }) => (value));
     const [photo] = photos
-      .map(({ value }) => (value.replace(/sz=50/, 'sz=100')));
+      .map(({ value }) => (value));
     User
       .findOrCreate(
         { email },
