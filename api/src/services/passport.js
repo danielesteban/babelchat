@@ -1,7 +1,7 @@
 const { unauthorized } = require('boom');
 const { param } = require('express-validator/check');
 const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const config = require('../config');
 const { OrgUser, User } = require('../models');
 const { checkValidationResult } = require('../services/errorHandler');

@@ -83,7 +83,7 @@ module.exports.listOrgs = (req, res, next) => {
 module.exports.loginWithGoogle = (
   passport.authenticate('google', {
     prompt: 'select_account',
-    scope: 'openid email profile',
+    scope: 'email profile',
   })
 );
 
