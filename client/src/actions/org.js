@@ -1,13 +1,25 @@
 import API from '@/services/api';
 import * as types from './types';
 
-export function createRoom({ flag, name, peerLimit }) {
+export function createRoom({
+  flag,
+  name,
+  peerLimit,
+  type,
+  users,
+}) {
   return (dispatch, getState) => {
     const { org: { id } } = getState();
     return dispatch({
       type: types.ORG_CREATE_ROOM,
       payload: API.fetch({
-        body: { flag, name, peerLimit },
+        body: {
+          flag,
+          name,
+          peerLimit,
+          type,
+          users,
+        },
         endpoint: `org/${id}/rooms`,
         method: 'PUT',
       }),

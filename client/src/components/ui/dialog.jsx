@@ -18,9 +18,9 @@ const Overlay = styled.div`
 
 const Wrapper = styled.div`
   position: absolute;
-  top: 50%;
+  top: 20%;
   left: 50%;
-  transform: translate(-50%, -75%);
+  transform: translate(-50%, 0);
   width: ${props => props.width};
   display: flex;
   flex-direction: column;

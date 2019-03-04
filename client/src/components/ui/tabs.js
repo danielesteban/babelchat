@@ -17,7 +17,6 @@ export default styled.div`
     cursor: pointer;
     transition: background-color ease-out .2s;
     will-change: background-color, color;
-    border-bottom: 1px solid #eee;
     border-right: 1px solid #222;
     &:hover {
       background-color: #333;
