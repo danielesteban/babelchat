@@ -1,4 +1,4 @@
-[BabelChat](https://babelchat.tk/)
+[BabelChat](https://babelchat.live/)
 ===
 
 [![Build Status](https://travis-ci.org/danielesteban/babelchat.svg?branch=master)](https://travis-ci.org/danielesteban/babelchat)

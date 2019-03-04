@@ -21,7 +21,7 @@ const swaggerSpec = swaggerJSDoc({
         description: 'Local server (dev environment)',
       },
       {
-        url: 'https://api.babelchat.tk/',
+        url: 'https://api.babelchat.live/',
         description: 'Production server (uses live data)',
       },
     ],

@@ -14,12 +14,12 @@ const modulesPath = path.resolve(__dirname, 'node_modules');
 const srcPath = path.resolve(__dirname, 'src');
 const outputPath = path.resolve(__dirname, 'dist');
 const mode = process.env.NODE_ENV === 'production' ? 'production' : 'development';
-const api = process.env.API || (mode === 'production' ? 'https://api.babelchat.tk/' : 'http://localhost:8081/');
+const api = process.env.API || (mode === 'production' ? 'https://api.babelchat.live/' : 'http://localhost:8081/');
 const basename = process.env.BASENAME || '/';
 const fontsCDN = 'https://fonts.googleapis.com/';
 const robotoCDN = 'https://fonts.gstatic.com/s/roboto/';
 const countryFlagsCDN = 'https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.1/flags/4x3/';
-const domain = process.env.DOMAIN || 'babelchat.tk';
+const domain = process.env.DOMAIN || 'babelchat.live';
 
 let version;
 if (fs.existsSync(path.resolve(__dirname, '..', '.git'))) {
