@@ -23,7 +23,13 @@ const RoomSchema = new mongoose.Schema({
     },
     photo: { type: Buffer, required: true },
   }],
+  public: { type: Boolean, default: true },
   slug: ShortId,
+  users: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    index: true,
+  }],
 }, { timestamps: true });
 
 RoomSchema.index({ slug: 1, org: 1 }, { unique: true });

@@ -63,10 +63,17 @@ module.exports.requireOrgUser = ({
         user: req.user._id,
         org,
       })
-      .select('-_id')
+      .select('-_id active admin')
       .then((isOrgUser) => {
         if (!isOrgUser) {
           throw unauthorized();
+        }
+        req.org = org;
+        if (isOrgUser.active) {
+          req.user.isOrgUser = true;
+        }
+        if (isOrgUser.admin) {
+          req.user.isOrgAdmin = true;
         }
         next();
       })

@@ -153,7 +153,9 @@ const Section = styled.div`
   padding: 3rem 0;
   > p {
     font-size: 1.5rem;
+    line-height: 1.25em;
     color: #666;
+    text-align: center;
   }
   > button > svg {
     font-size: 2em;

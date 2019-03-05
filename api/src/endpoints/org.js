@@ -100,6 +100,8 @@ module.exports.get = [
 ];
 
 module.exports.getImage = [
+  param('org')
+    .isMongoId(),
   param('image')
     .isIn(['cover', 'logo']),
   checkValidationResult,
@@ -135,7 +137,7 @@ module.exports.getImage = [
 ];
 
 module.exports.getUsers = (req, res, next) => {
-  const { org } = req.params;
+  const { org } = req;
   return OrgUser
     .find({
       admin: false,
@@ -153,7 +155,7 @@ module.exports.getUsers = (req, res, next) => {
 };
 
 module.exports.remove = (req, res, next) => {
-  const { org } = req.params;
+  const { org } = req;
   // Remove org users
   return OrgUser
     .deleteMany({ org })
@@ -191,7 +193,7 @@ module.exports.removeUser = [
     .isMongoId(),
   checkValidationResult,
   (req, res, next) => {
-    const { org, user } = req.params;
+    const { org, user } = req;
     return OrgUser
       .findOne({
         active: true,
@@ -222,7 +224,8 @@ module.exports.resolveAccessRequest = [
     .isIn(['approve', 'decline']),
   checkValidationResult,
   (req, res, next) => {
-    const { org, user, resolution } = req.params;
+    const { org } = req;
+    const { user, resolution } = req.params;
     return OrgUser
       .findOne({
         active: false,
@@ -285,8 +288,8 @@ module.exports.update = [
     .trim(),
   checkValidationResult,
   (req, res, next) => {
+    const { org } = req;
     const { name } = req.body;
-    const { org } = req.params;
     return Org
       .findById(org)
       .then((org) => {
@@ -311,7 +314,8 @@ module.exports.updateImage = [
     .isIn(['cover', 'logo']),
   checkValidationResult,
   (req, res, next) => {
-    const { org, image } = req.params;
+    const { org } = req;
+    const { image } = req.params;
     if (
       !req.file
       || !req.file.buffer

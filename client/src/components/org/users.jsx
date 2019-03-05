@@ -35,6 +35,7 @@ const User = styled.div`
   > div {
     display: flex;
     align-items: center;
+    padding: 0.25rem 0;
     > button {
       margin-left: 0.5rem;
     }

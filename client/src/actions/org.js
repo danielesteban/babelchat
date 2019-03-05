@@ -5,7 +5,6 @@ export function createRoom({
   flag,
   name,
   peerLimit,
-  type,
   users,
 }) {
   return (dispatch, getState) => {
@@ -17,7 +16,6 @@ export function createRoom({
           flag,
           name,
           peerLimit,
-          type,
           users,
         },
         endpoint: `org/${id}/rooms`,

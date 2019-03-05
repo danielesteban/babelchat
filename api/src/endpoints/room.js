@@ -1,4 +1,5 @@
 const { body, param } = require('express-validator/check');
+const { isMongoId } = require('validator');
 const { Org, OrgUser, Room } = require('../models');
 const { checkValidationResult } = require('../services/errorHandler');
 const Rooms = require('../services/rooms');
@@ -15,15 +16,33 @@ module.exports.create = [
     .optional()
     .isInt()
     .toInt(),
+  body('users')
+    .optional()
+    .isArray()
+    .custom((users) => {
+      for (let i = 0; i < users.length; i += 1) {
+        if (!isMongoId(users[i])) {
+          return false;
+        }
+      }
+      return true;
+    }),
   checkValidationResult,
   (req, res, next) => {
-    const { flag, name, peerLimit } = req.body;
-    const { org } = req.params;
+    const {
+      flag,
+      name,
+      peerLimit,
+      users,
+    } = req.body;
+    const { org } = req;
     const room = new Room({
       flag,
       name,
       org,
       peerLimit: peerLimit ? Math.min(Math.max(peerLimit, 2), 8) : undefined,
+      public: !users,
+      users: users || undefined,
     });
     return room
       .save()
@@ -41,10 +60,18 @@ module.exports.create = [
 ];
 
 module.exports.list = (req, res, next) => {
-  const { org } = req.params;
+  const { org } = req;
   // Fetch the room list from the db
   return Room
-    .find({ org })
+    .find({
+      org,
+      ...(!req.user.isOrgAdmin ? ({
+        $or: [
+          { public: true },
+          { users: req.user._id },
+        ],
+      }) : {}),
+    })
     .select('-_id flag name peerLimit slug')
     .then(rooms => res.json(
       rooms.map(({ _doc }) => {
@@ -147,7 +174,8 @@ module.exports.remove = [
     .trim(),
   checkValidationResult,
   (req, res, next) => {
-    const { org, slug } = req.params;
+    const { org } = req;
+    const { slug } = req.params;
     return Room
       .deleteOne({ org, slug })
       .then(() => {

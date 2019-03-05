@@ -50,7 +50,6 @@ class CreateRoom extends PureComponent {
     const { target: form } = e;
     e.preventDefault();
     const payload = {
-      type,
       flag: form.flag.value,
       name: form.name.value,
     };
